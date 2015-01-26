@@ -4,7 +4,7 @@ export "package:polymorphic_bot/plugin.dart";
 @BotInstance()
 BotConnector bot;
 
-@Command("commands")
+@Command("commands", description: "Lists Commands")
 commands(CommandEvent event) {
   bot.getCommands().then((commands) {
     DisplayHelpers.paginate(commands, 5, (page, items) {
@@ -13,10 +13,10 @@ commands(CommandEvent event) {
   });
 }
 
-@Command("command")
+@Command("command", description: "Gets Command Information", usage: "<cmd>")
 command(CommandEvent event) {
-  if (event.args.length != 1) {
-    event.reply("> Usage: command <cmd>");
+  if (event.argc != 1) {
+    event.usage();
     return;
   }
 
