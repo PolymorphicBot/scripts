@@ -26,7 +26,7 @@ command(CommandEvent event) {
       return;
     }
 
-    event.replyNotice("[${Color.BLUE}Command${Color.RESRT}] Plugin: ${cmd.plugin}");
+    event.replyNotice("[${Color.BLUE}Command${Color.RESET}] Plugin: ${cmd.plugin}");
     
     if (cmd.description != null) {
       event.replyNotice("[${Color.BLUE}Command${Color.RESET}] Description: ${cmd.description}");
