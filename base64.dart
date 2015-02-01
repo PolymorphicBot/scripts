@@ -12,11 +12,25 @@ base64(CommandEvent event) {
   
   var input = (new List<String>.from(event.args)..removeAt(0)).join(" ");
   
-  if (event.args[0] == "encode") {
-    var encoded = CryptoUtils.bytesToBase64(input.codeUnits);
-    event.reply("${encoded}", prefixContent: "Base64");
-  } else if (event.args[0] == "decode") {
-    var decoded = new String.fromCharCodes(CryptoUtils.base64StringToBytes(input));
-    event.reply("${decoded}", prefixContent: "Base64");
+  try {
+    if (event.args[0] == "encode") {
+      var encoded = encode(input);
+      event.reply("${encoded}", prefixContent: "Base64");
+    } else if (event.args[0] == "decode") {
+      var decoded = decode(input);
+      event.reply("${decoded}", prefixContent: "Base64");
+    }
+  } on FormatException catch (e) {
+    if (e.message.contains("Size of Base 64 characters in Input")) {
+      event.reply("ERROR: Size of Base64 characters in the input must be a multiple of 4.", prefixContent: "Base64");
+    } else {
+      event.reply("ERROR: ${e.message}", prefixContent: "Base64");
+    }
   }
 }
+
+@RemoteMethod()
+String encode(String input) => CryptoUtils.bytesToBase64(input.codeUnits);
+
+@RemoteMethod()
+String decode(String input) => new String.fromCharCodes(CryptoUtils.base64StringToBytes(input));
