@@ -8,7 +8,7 @@ Plugin plugin;
 @BotInstance()
 BotConnector bot;
 
-RegExp SEARCH_REPLACE = new RegExp(r"^s\/(.+?)\/(.+?)(?:\/?)([a-z]+?$|$)");
+RegExp SEARCH_REPLACE = new RegExp(r"^s\/(.+?)\/(.*?)(?:\/?)([a-z]+?$|$)");
 
 @OnMessage()
 handleMessage(MessageEvent event) {
@@ -22,6 +22,8 @@ handleMessage(MessageEvent event) {
   var global = false;
   var escaped = true;
   var reverse = false;
+  var capitalize = false;
+  var caseSensitive = true;
   
   var mods = match.group(3) != null ? (new List<String>.generate(match.group(3).length, (i) => match.group(3)[i])) : [];
   
@@ -35,6 +37,12 @@ handleMessage(MessageEvent event) {
         break select;
       case "r":
         reverse = true;
+        break select;
+      case "c":
+        capitalize = true;
+        break select;
+      case "i":
+        caseSensitive = false;
         break select;
       default:
         event.reply("Invalid Modifier: ${mod}", prefixContent: "RegExp");
@@ -51,7 +59,7 @@ handleMessage(MessageEvent event) {
   RegExp regex;
   
   try {
-    regex = new RegExp(search);
+    regex = new RegExp(search, caseSensitive: caseSensitive);
   } on FormatException catch (e) {
     event.reply("Invalid Expression: ${e.message}", prefixContent: "RegExp");
     return;
@@ -77,6 +85,10 @@ handleMessage(MessageEvent event) {
       
       if (newmsg.length > 400) {
         newmsg = newmsg.substring(0, 400) + "...";
+      }
+      
+      if (capitalize) {
+        newmsg = newmsg[0].toUpperCase() + newmsg.substring(1);
       }
       
       var e = new BufferEntry(entry.network, entry.target, entry.user, newmsg);
