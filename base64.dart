@@ -3,7 +3,7 @@ import "package:crypto/crypto.dart";
 
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("base64", usage: "<encode/decode> <input>", description: "Base64 Encoding and Decoding")
+@Command("base64", usage: "<encode/decode> <input>", description: "Base64 Encoding and Decoding", allowVariables: true)
 base64(CommandEvent event) {
   if (event.argc < 2 || !(["encode", "decode"].contains(event.args[0]))) {
     event.usage();

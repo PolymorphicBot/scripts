@@ -3,3 +3,4 @@ dependencies:
   polymorphic_bot:
     path: "../Bot"
   html5lib: any
+  math_expressions: ">=0.1.0 <0.2.0"

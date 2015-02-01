@@ -10,7 +10,7 @@ Plugin plugin;
 @PluginStorage("todos")
 Storage todos;
 
-@Command("add-todo")
+@Command("add-todo", allowVariables: true)
 addToDo(CommandEvent event) {
   if (event.args.isEmpty) {
     event.reply("> Usage: add-todo <message>");
