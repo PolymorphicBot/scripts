@@ -72,5 +72,7 @@ batch(CommandEvent event) {
     for (var m in e) {
       plugin.callMethod("emit", m);
     }
+  } else {
+    event.reply("Invalid Command", prefixContent: "Batch");
   }
 }
