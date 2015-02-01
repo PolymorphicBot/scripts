@@ -2,3 +2,4 @@ name: scripts
 dependencies:
   polymorphic_bot:
     path: "../Bot"
+  html5lib: any
