@@ -68,12 +68,18 @@ face(CommandEvent event) {
 }
 
 Future<String> getGoogleImage(String query, CommandEvent event, {String type}) {
-  return event.fetchJSON("http://ajax.googleapis.com/ajax/services/search/images", query: {
+  var q = {
     "v": "1.0",
     "rsz": "8",
     "q": query,
     "safe": "active"
-  }..addAll(type != null ? { "type": type } : {})).then((response) {
+  };
+  
+  if (type != null) {
+    q["imgtype"] = type;
+  }
+  
+  return event.fetchJSON("http://ajax.googleapis.com/ajax/services/search/images", query: q).then((response) {
     List<dynamic> images = response["responseData"] == null ? [] : response["responseData"]["results"];
     
     if (images.isEmpty) {

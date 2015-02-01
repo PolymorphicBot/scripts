@@ -1,12 +1,7 @@
 import "dart:async";
-import 'package:html5lib/parser.dart' as html5 show parse;
 
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
-
-const dependencies = const {
-  "html5lib": "any"
-};
 
 @PluginInstance()
 Plugin plugin;
@@ -51,7 +46,7 @@ Future<String> getLinkTitle(String url) {
     }
 
     try {
-      var document = html5.parse(response.body);
+      var document = parseHtml(response.body);
 
       if (document == null) {
         throw new Exception("FAIL");
