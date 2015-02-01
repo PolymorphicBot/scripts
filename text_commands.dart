@@ -13,7 +13,8 @@ Storage storage;
 @Command("addtxtcmd",
     permission: "add",
     description: "Adds a Text Command",
-    usage: "<command> <text>")
+    usage: "<command> <text>",
+    allowVariables: true)
 addtxtcmd(CommandEvent event) {
   if (event.args.length < 2) {
     event.reply("Usage: addtxtcmd <command> <text>",
@@ -55,7 +56,8 @@ listtxtcmds(CommandEvent event) {
 @Command("addchannelcmd",
     permission: "channel.add",
     description: "Adds a Channel Command",
-    usage: "<command> <text>")
+    usage: "<command> <text>",
+    allowVariables: true)
 addchannelcmd(CommandEvent event) {
   if (event.args.length < 2) {
     event.reply("Usage: addchannelcmd <command> <text>",
@@ -98,7 +100,8 @@ listchannelcmds(CommandEvent event) {
 @Command("addgchannelcmd",
     permission: "channel.global.add",
     description: "Adds a Global Channel Command",
-    usage: "<command> <text>")
+    usage: "<command> <text>",
+    allowVariables: true)
 addgchannelcmd(CommandEvent event) {
   if (event.args.length < 2) {
     event.reply("Usage: addgchannelcmd <command> <text>",
