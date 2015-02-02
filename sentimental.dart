@@ -89,6 +89,34 @@ checkOn(CommandEvent event) {
   event.replyNotice("Negative: ${negative}", prefixContent: "Sentimental");
 }
 
+@HttpEndpoint("/data.json")
+jsonData(request, response) {
+  var keys = allScores.keys;
+  var map = <String, Map<String, Map<String, dynamic>>>{};
+  
+  for (var key in keys) {
+    var split = key.split(":");
+    var network = split[0];
+    var user = split[1];
+    
+    if (!map.containsKey(network)) {
+      map[network] = {};
+    }
+    
+    var u = allScores.getSubStorage(key);
+    
+    map[network][user] = {
+      "positive": u.getDouble("positive"),
+      "negative": u.getDouble("negative"),
+      "score": u.getDouble("positive") - u.getDouble("negative")
+    };
+  }
+  
+  var content = new JsonEncoder.withIndent("  ").convert(map);
+  response.write(content);
+  response.close();
+}
+
 class Sentiment {
   final int score;
   final num comparative;
