@@ -6,7 +6,7 @@ Plugin plugin;
 @BotInstance()
 BotConnector bot;
 
-@Command("pacman", description: "Arch Linux Package Manager", usage: "stats")
+@Command("pacman", description: "Arch Linux Package Manager", usage: "stats/info")
 pacman(CommandEvent event) {
   if (event.hasNoArguments) {
     event.usage();
