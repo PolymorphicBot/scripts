@@ -10,7 +10,7 @@ base64(CommandEvent event) {
     return;
   }
   
-  var input = (new List<String>.from(event.args)..removeAt(0)).join(" ");
+  var input = event.dropJoinArguments(1);
   
   try {
     if (event.args[0] == "encode") {
