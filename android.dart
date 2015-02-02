@@ -1,5 +1,6 @@
 import "dart:convert";
 import "package:polymorphic_bot/plugin.dart";
+export "package:polymorphic_bot/plugin.dart";
 
 Map<String, dynamic> data;
 
