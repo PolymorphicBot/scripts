@@ -10,19 +10,19 @@ import "package:crypto/crypto.dart" show CryptoUtils;
 @Start()
 start() => initCipher();
 
-@Command("sha1")
+@Command("sha1", allowVariables: true)
 sha1(CommandEvent event) => event.transform((input) => hash(input, "SHA-1"), prefix: "SHA-1");
 
-@Command("sha3")
+@Command("sha3", allowVariables: true)
 sha3(CommandEvent event) => event.transform((input) => hash(input, "SHA-3"), prefix: "SHA-3");
 
-@Command("md5")
+@Command("md5", allowVariables: true)
 md5(CommandEvent event) => event.transform((input) => hash(input, "MD5"), prefix: "MD5");
 
-@Command("sha256")
+@Command("sha256", allowVariables: true)
 sha256(CommandEvent event) => event.transform((input) => hash(input, "SHA-256"), prefix: "SHA-256");
 
-@Command("sha512")
+@Command("sha512", allowVariables: true)
 sha512(CommandEvent event) => event.transform((input) => hash(input, "SHA-512"), prefix: "SHA-512");
 
 String hash(String input, String name) {
