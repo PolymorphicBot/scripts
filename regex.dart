@@ -18,14 +18,20 @@ handleMessage(MessageEvent event) {
   
   var match = SEARCH_REPLACE.firstMatch(event.message);
   var search = match.group(1);
-  var replace = match.group(2);
+  var replace = match.group(2).isEmpty && match.group(3).isNotEmpty ? match.group(3) : match.group(2);
   var global = false;
   var escaped = true;
   var reverse = false;
   var capitalize = false;
   var caseSensitive = true;
+  List<String> mods;
   
-  var mods = match.group(3) != null ? (new List<String>.generate(match.group(3).length, (i) => match.group(3)[i])) : [];
+  // Fix Stuff
+  if (match.group(2).isNotEmpty && match.group(3) != null && match.group(3).isNotEmpty) {
+    mods = new List<String>.generate(match.group(3).length, (i) => match.group(3)[i]);
+  } else {
+    mods = [];
+  }
   
   loop: for (var mod in mods) {
     select: switch (mod) {
