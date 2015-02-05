@@ -157,6 +157,25 @@ void handleAction(ActionEvent event) {
   addEntry(new LogEntry(event.network, event.target, "* ${event.user} ${DisplayHelpers.clean(event.message)}"));
 }
 
+@OnNickChange()
+void handleNickChange(NickChangeEvent event) {
+  bot.getChannels(event.network).then((channels) {
+    var c = channels.where((it) {
+      var all = (new Set<String>()
+        ..addAll(it.members)
+        ..addAll(it.ops)
+        ..addAll(it.voices)
+        ..addAll(it.halfOps)
+        ..addAll(it.owners));
+      return all.contains(event.original) || all.contains(event.now);
+    }).map((it) => it.name).toList();
+    
+    for (var m in c) {
+      addEntry(new LogEntry(event.network, m, "${event.original} is now known as ${event.now}")); 
+    }
+  });
+}
+
 @OnMessage()
 void handleMessage(MessageEvent event) {
   if (event.isPrivate) return;
