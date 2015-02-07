@@ -13,9 +13,7 @@ rerun(CommandEvent event) {
     event.usage();
     return;
   }
-  
-  List<BufferEntry> entries;
-  
+    
   event.getLastCommand(true).then((command) {
     if (command == null) {
       event.reply("No Command to Rerun.", prefixContent: "Rerun");
