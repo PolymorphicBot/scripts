@@ -116,6 +116,8 @@ translate(CommandEvent event) {
   }).then((List<dynamic> response) {
     var language = languages[response[2]];
     String translated = response[0][0] is String ? response[0][0] : response[0][0][0];
+
+    translated = '"' + translated.substring(1, translated.length - 1).trim() + '"';
     
     if (from == "auto") {
       if (language == null) {
