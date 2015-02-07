@@ -6,7 +6,17 @@ Plugin plugin;
 @BotInstance()
 BotConnector bot;
 
-@Command("systemctl", description: "Manage System Services", permission: "manage", usage: "start/stop/restart <service>")
+const String CIRCLE = "\u25CF";
+
+final String GREEN_CIRCLE = "${Color.GREEN}${CIRCLE}${Color.RESET}";
+final String RED_CIRCLE = "${Color.RED}${CIRCLE}${Color.RESET}";
+final String YELLOW_CIRCLE = "${Color.YELLOW}${CIRCLE}${Color.RESET}";
+
+@Command("systemctl",
+    description: "Manage System Services",
+    permission: "manage",
+    usage: "start/stop/restart/is-active/status <service>"
+)
 systemctl(CommandEvent event) {
   if (event.hasNoArguments) {
     event.usage();
@@ -90,7 +100,54 @@ systemctl(CommandEvent event) {
       status = status.trim();
       event.reply("Status: ${status}", prefixContent: "Services");
     });
+  } else if (cmd == "waterfall") {
+    if (args.isNotEmpty) {
+      event.usage();
+      return;
+    }
+    
+    ProcessHelper.getStdout("sudo", ["systemctl", "list-units", "--no-pager", "--plain", "--all"]).then((output) {
+      var statuses = parseUnitFilesList(output);
+      for (var name in statuses.keys) {
+        var status = statuses[name];
+        String icon = CIRCLE;
+        
+        if (status == "active") {
+          icon = GREEN_CIRCLE;
+        } else if (status == "inactive") {
+          icon = YELLOW_CIRCLE;
+        } else if (status == "failed") {
+          icon = RED_CIRCLE;
+        } else {
+          icon = CIRCLE;
+        }
+        
+        event.replyNotice("${icon} ${name}", prefixContent: "Services");
+      }
+    });
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
   }
+}
+
+Map<String, String> parseUnitFilesList(String out) {
+  var lines = out.split("\n")..removeAt(0);
+  lines = lines.takeWhile((x) => x.startsWith("  ") || x.startsWith("${CIRCLE}")).map((it) {
+    return it.replaceAll("${CIRCLE}", "").trim();
+  }).toList();
+  lines.removeWhere((it) => it.trim().isEmpty);
+  
+  var map = {};
+  for (var line in lines) {
+    var parts = line.split(" ");
+    var name = parts[0];
+    var status = parts[2];
+    
+    if (!name.endsWith(".service") || name.startsWith("user@")) {
+      continue;
+    }
+    
+    map[name.substring(0, name.indexOf(".service"))] = status;
+  }
+  return map;
 }
