@@ -146,7 +146,7 @@ Map<String, String> parseUnitFilesList(String out) {
     parts.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
     var name = parts[0];
     var status = parts[2];
-    if (!name.endsWith(".service") || name.startsWith("user@") || name.startsWith("systemd-")) {
+    if (!name.endsWith(".service") || name.contains("@") || name.startsWith("systemd-")) {
       continue;
     }
     
