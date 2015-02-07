@@ -1,3 +1,5 @@
+import "dart:io";
+
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
@@ -123,6 +125,7 @@ systemctl(CommandEvent event) {
         }
         
         event.replyNotice("${icon} ${name}", prefixContent: "Services");
+        sleep(new Duration(milliseconds: 200));
       }
     });
   } else {
@@ -135,14 +138,14 @@ Map<String, String> parseUnitFilesList(String out) {
   lines = lines.takeWhile((x) => x.startsWith("  ") || x.startsWith("${CIRCLE}")).map((it) {
     return it.replaceAll("${CIRCLE}", "").trim();
   }).toList();
-  lines.removeWhere((it) => it.trim().isEmpty);
+  lines.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
   
   var map = {};
   for (var line in lines) {
     var parts = line.split(" ");
+    parts.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
     var name = parts[0];
     var status = parts[2];
-    
     if (!name.endsWith(".service") || name.startsWith("user@")) {
       continue;
     }
