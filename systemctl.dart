@@ -124,7 +124,7 @@ systemctl(CommandEvent event) {
           icon = CIRCLE;
         }
         
-        event.replyNotice("${icon} ${name}", prefixContent: "Services");
+        event.replyNotice("${icon} ${name}");
         sleep(new Duration(milliseconds: 200));
       }
     });
