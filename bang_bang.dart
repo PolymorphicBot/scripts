@@ -11,21 +11,9 @@ bangBang(MessageEvent event) {
       return;
     }
     
-    event.getChannelPrefix().then((prefix) {
-      var n = command.message.substring(prefix.length).split(" ");
-      
-      var c = n.first;
-      var args = new List<String>.from(n)..removeAt(0);
-      
-      event.bot.plugin.callMethod("emit", {
-        "network": event.network,
-        "target": event.channel,
-        "from": event.user,
-        "command": c,
-        "args": args,
-        "message": "${command.message}",
-        "event": "command"
-      });
-    });
+    var args = command.split(" ");
+    var cmd = args.removeAt(0);
+    
+    event.executeCommand(cmd, args);
   });
 }
