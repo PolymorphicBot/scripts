@@ -27,7 +27,10 @@ systemctl(CommandEvent event) {
       
       if (exitCode != 0) {
         event.reply("Failed to start '${args[0]}'.", prefixContent: "Services");
+        return;
       }
+      
+      event.reply("Started '${args[0]}'.", prefixContent: "Services");
     });
   } else if (cmd == "stop") {
     if (args.length != 1) {
@@ -40,7 +43,10 @@ systemctl(CommandEvent event) {
       
       if (exitCode != 0) {
         event.reply("Failed to stop '${args[0]}'.", prefixContent: "Services");
+        return;
       }
+      
+      event.reply("Stopped '${args[0]}'.", prefixContent: "Services");
     });
   } else if (cmd == "restart") {
     if (args.length != 1) {
@@ -53,7 +59,10 @@ systemctl(CommandEvent event) {
       
       if (exitCode != 0) {
         event.reply("Failed to restart '${args[0]}'.", prefixContent: "Services");
+        return;
       }
+      
+      event.reply("Restarted '${args[0]}'.", prefixContent: "Services");
     });
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
