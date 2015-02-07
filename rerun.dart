@@ -16,33 +16,15 @@ rerun(CommandEvent event) {
   
   List<BufferEntry> entries;
   
-  event.getChannelBuffer().then((e) {
-    entries = e;
-    return bot.getPrefix(event.network, event.channel);
-  }).then((prefix) {
-    var e = entries.firstWhere((e) => e.network == event.network && e.user == e.user && e.message.startsWith(prefix), orElse: () => null);
-    
-    if (e == null) {
+  event.getLastCommand(true).then((command) {
+    if (command == null) {
       event.reply("No Command to Rerun.", prefixContent: "Rerun");
       return;
     }
     
-    var m = e.message;
-    m = m.substring(prefix.length);
+    var args = command.split(" ");
+    var cmd = args.removeAt(0);
     
-    var split = m.split(" ").toList(growable: true);
-    
-    var c = split.removeAt(0);
-    var a = split;
-    
-    plugin.callMethod("emit", {
-      "network": event.network,
-      "target": event.channel,
-      "from": event.user,
-      "command": c,
-      "args": a,
-      "message": "${e.message}",
-      "event": "command"
-    });
+    event.executeCommand(cmd, args);
   });
 }

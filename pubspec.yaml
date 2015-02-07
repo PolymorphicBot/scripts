@@ -1,6 +1,5 @@
 name: scripts
 dependencies:
   polymorphic_bot:
-    path: "../Bot"
-  html5lib: any
+    git: git://github.com/PolymorphicBot/PolymorphicBot.git
   math_expressions: ">=0.1.0 <0.2.0"
