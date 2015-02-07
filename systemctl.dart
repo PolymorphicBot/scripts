@@ -6,7 +6,7 @@ Plugin plugin;
 @BotInstance()
 BotConnector bot;
 
-@Command("systemctl", description: "", usage: "start/stop/restart <service>")
+@Command("systemctl", description: "Manage System Services", permission: "manage", usage: "start/stop/restart <service>")
 systemctl(CommandEvent event) {
   if (event.hasNoArguments) {
     event.usage();
