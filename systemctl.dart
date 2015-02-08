@@ -33,16 +33,64 @@ systemctl(CommandEvent event) {
       event.reply("> Usage: ${cmd} <service>");
       return;
     }
-  
+
     ProcessHelper.run("sudo", ["systemctl", "start", args[0]]).then((result) {
       var exitCode = result.exitCode;
-      
+
       if (exitCode != 0) {
         event.reply("Failed to start '${args[0]}'.", prefixContent: "Services");
         return;
       }
-      
+
       event.reply("Started '${args[0]}'.", prefixContent: "Services");
+    });
+  } else if (cmd == "reload") {
+    if (args.length != 1) {
+      event.reply("> Usage: ${cmd} <service>");
+      return;
+    }
+
+    ProcessHelper.run("sudo", ["systemctl", "reload", args[0]]).then((result) {
+      var exitCode = result.exitCode;
+
+      if (exitCode != 0) {
+        event.reply("Failed to reload '${args[0]}'.", prefixContent: "Services");
+        return;
+      }
+
+      event.reply("Reloaded '${args[0]}'.", prefixContent: "Services");
+    });
+  } else if (cmd == "enable") {
+    if (args.length != 1) {
+      event.reply("> Usage: ${cmd} <service>");
+      return;
+    }
+
+    ProcessHelper.run("sudo", ["systemctl", "enable", args[0]]).then((result) {
+      var exitCode = result.exitCode;
+
+      if (exitCode != 0) {
+        event.reply("Failed to enable '${args[0]}'.", prefixContent: "Services");
+        return;
+      }
+
+      event.reply("Enabled '${args[0]}'.", prefixContent: "Services");
+    });
+  } else if (cmd == "disable") {
+    if (args.length != 1) {
+      event.reply("> Usage: ${cmd} <service>");
+      return;
+    }
+
+    ProcessHelper.run("sudo", ["systemctl", "disable", args[0]]).then((result) {
+      var exitCode = result.exitCode;
+
+      if (exitCode != 0) {
+        event.reply("Failed to disable '${args[0]}'.", prefixContent: "Services");
+        return;
+      }
+
+      event.reply("Disabled '${args[0]}'.", prefixContent: "Services");
     });
   } else if (cmd == "stop") {
     if (args.length != 1) {
@@ -91,6 +139,22 @@ systemctl(CommandEvent event) {
       }
       
       event.reply("'${args[0]}' is running.", prefixContent: "Services");
+    });
+  } else if (cmd == "is-enabled") {
+    if (args.length != 1) {
+      event.reply("> Usage: ${cmd} <service>");
+      return;
+    }
+
+    ProcessHelper.run("sudo", ["systemctl", "is-enabled", args[0]]).then((result) {
+      var exitCode = result.exitCode;
+
+      if (exitCode != 0) {
+        event.reply("'${args[0]}' is not enabled.", prefixContent: "Services");
+        return;
+      }
+
+      event.reply("'${args[0]}' is enabled.", prefixContent: "Services");
     });
   } else if (cmd == "status") {
     if (args.length != 1) {
