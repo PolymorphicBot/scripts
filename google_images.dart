@@ -11,61 +11,28 @@ Plugin plugin;
 BotConnector bot;
 
 @Command("image", description: "Fetches a Random Image from Google Images using the specified query", usage: "<query>")
-image(CommandEvent event) {
+image(CommandEvent event, [String type]) async {
   if (event.hasNoArguments) {
     event.usage();
     return;
   }
-  
+
   var query = event.joinArgs();
-  
-  getGoogleImage(query, event).then((url) {
-    if (url == null) {
-      event.reply("> Unable to find image for query.");
-      return;
-    }
-    
-    event.reply(url, prefixContent: "Google Images");
-  });
+
+  var url = await getGoogleImage(query, event, type: type);
+  if (url == null) {
+    event.reply("> Unable to find image for query.");
+    return;
+  }
+
+  event << "[${Color.BLUE}Google Images${Color.RESET}] ${url}";
 }
 
 @Command("animate", description: "Fetches a Random Animated Image from Google Images using the specified query", usage: "<query>")
-animate(CommandEvent event) {
-  if (event.hasNoArguments) {
-    event.usage();
-    return;
-  }
-  
-  var query = event.joinArgs();
-  
-  getGoogleImage(query, event, type: "animated").then((url) {
-    if (url == null) {
-      event.reply("> Unable to find image for query.");
-      return;
-    }
-    
-    event.reply(url, prefixContent: "Google Images");
-  });
-}
+animate(CommandEvent event) async => await image(event, "animated");
 
 @Command("face", description: "Fetches a Random Face Image from Google Images using the specified query", usage: "<query>")
-face(CommandEvent event) {
-  if (event.hasNoArguments) {
-    event.usage();
-    return;
-  }
-  
-  var query = event.joinArgs();
-  
-  getGoogleImage(query, event, type: "face").then((url) {
-    if (url == null) {
-      event.reply("> Unable to find image for query.");
-      return;
-    }
-    
-    event.reply(url, prefixContent: "Google Images");
-  });
-}
+face(CommandEvent event) async => await image(event, "face");
 
 Future<String> getGoogleImage(String query, CommandEvent event, {String type}) {
   var q = {
