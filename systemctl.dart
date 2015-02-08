@@ -30,7 +30,7 @@ systemctl(CommandEvent event) {
   
   if (cmd == "start") {
     if (args.length != 1) {
-      event.usage();
+      event.reply("> Usage: ${cmd} <service>");
       return;
     }
   
@@ -46,7 +46,7 @@ systemctl(CommandEvent event) {
     });
   } else if (cmd == "stop") {
     if (args.length != 1) {
-      event.usage();
+      event.reply("> Usage: ${cmd} <service>");
       return;
     }
   
@@ -62,7 +62,7 @@ systemctl(CommandEvent event) {
     });
   } else if (cmd == "restart") {
     if (args.length != 1) {
-      event.usage();
+      event.reply("> Usage: ${cmd} <service>");
       return;
     }
   
@@ -78,7 +78,7 @@ systemctl(CommandEvent event) {
     });
   } else if (cmd == "is-active") {
     if (args.length != 1) {
-      event.usage();
+      event.reply("> Usage: ${cmd} <service>");
       return;
     }
   
@@ -94,7 +94,7 @@ systemctl(CommandEvent event) {
     });
   } else if (cmd == "status") {
     if (args.length != 1) {
-      event.usage();
+      event.reply("> Usage: ${cmd} <service>");
       return;
     }
 
@@ -103,8 +103,8 @@ systemctl(CommandEvent event) {
       event.reply("Status: ${status}", prefixContent: "Services");
     });
   } else if (cmd == "daemon-reload") {
-    if (args.length != 1) {
-      event.usage();
+    if (args.isNotEmpty) {
+      event.reply("> Usage: ${cmd}");
       return;
     }
 
@@ -117,7 +117,7 @@ systemctl(CommandEvent event) {
     });
   } else if (cmd == "waterfall") {
     if (args.isNotEmpty) {
-      event.usage();
+      event.reply("> Usage: ${cmd}");
       return;
     }
 
@@ -154,6 +154,11 @@ systemctl(CommandEvent event) {
       });
     });
   } else if (cmd == "help") {
+    if (args.isNotEmpty) {
+      event.reply("> Usage: ${cmd}");
+      return;
+    }
+    
     event.replyNotice("Commands: start/stop/restart/is-active/waterfall/status/daemon-reload", prefixContent: "Services");
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
