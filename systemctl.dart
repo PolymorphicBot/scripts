@@ -125,7 +125,7 @@ systemctl(CommandEvent event) {
         }
         
         event.replyNotice("${icon} ${name}");
-        sleep(new Duration(milliseconds: 100));
+        sleep(new Duration(milliseconds: 50));
       }
     });
   } else {
@@ -135,7 +135,10 @@ systemctl(CommandEvent event) {
 
 Map<String, String> parseUnitFilesList(String out) {
   var lines = out.split("\n")..removeAt(0);
-  lines = lines.where((x) => x.startsWith("  ") || x.startsWith("${CIRCLE}") || x.startsWith("*")).map((it) {
+  lines = lines.where((x) {
+    print(x);
+    return x.startsWith("  ") || x.startsWith("${CIRCLE}") || x.startsWith("*");
+  }).map((it) {
     return it.replaceAll("${CIRCLE}", "").trim();
   }).toList();
   lines.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
