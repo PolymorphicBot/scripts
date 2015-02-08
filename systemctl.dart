@@ -110,23 +110,35 @@ systemctl(CommandEvent event) {
     
     ProcessHelper.getStdout("sudo", ["systemctl", "list-units", "--no-pager", "--plain", "--all"]).then((output) {
       var statuses = parseUnitFilesList(output);
-      for (var name in statuses.keys) {
-        var status = statuses[name];
-        String icon = CIRCLE;
-        
-        if (status == "active") {
-          icon = GREEN_CIRCLE;
-        } else if (status == "inactive") {
-          icon = YELLOW_CIRCLE;
-        } else if (status == "failed") {
-          icon = RED_CIRCLE;
-        } else {
-          icon = CIRCLE;
+
+      DisplayHelpers.paginate(statuses.keys, 4, (page, items) {
+        var buff = new StringBuffer();
+        var first = true;
+        for (var name in items) {
+          if (first) {
+            first = false;
+          } else {
+            buff.write(" | ");
+          }
+
+          var status = statuses[name];
+          String icon = CIRCLE;
+
+          if (status == "active") {
+            icon = GREEN_CIRCLE;
+          } else if (status == "inactive") {
+            icon = YELLOW_CIRCLE;
+          } else if (status == "failed") {
+            icon = RED_CIRCLE;
+          } else {
+            icon = CIRCLE;
+          }
+
+          buff.write("${icon} ${name}");
         }
-        
-        event.replyNotice("${icon} ${name}");
-        sleep(new Duration(milliseconds: 50));
-      }
+
+        event.replyNotice(buff.toString());
+      });
     });
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
