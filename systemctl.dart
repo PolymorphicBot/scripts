@@ -157,15 +157,28 @@ systemctl(CommandEvent event) {
       event.reply("'${args[0]}' is enabled.", prefixContent: "Services");
     });
   } else if (cmd == "status") {
-    if (args.length != 1) {
-      event.reply("> Usage: ${cmd} <service>");
+    if (args.length > 1) {
+      event.reply("> Usage: ${cmd} [service]");
       return;
     }
 
-    ProcessHelper.getStdout("sudo", ["systemctl", "is-active", args[0]]).then((status) {
-      status = status.trim();
-      event.reply("Status: ${status}", prefixContent: "Services");
-    });
+    if (args.length == 1) {
+      ProcessHelper.getStdout("sudo", ["systemctl", "is-active", args[0]]).then((status) {
+        status = status.trim();
+
+        var color = getColorForStatus(status);
+
+        event.reply("Status: ${color}${status}${Color.RESET}", prefixContent: "Services");
+      });
+    } else {
+      ProcessHelper.getStdout("sudo", ["systemctl", "is-system-running"]).then((status) {
+        status = status.trim();
+
+        var color = getColorForStatus(status);
+
+        event.reply("System Status: ${color}${status}${Color.RESET}", prefixContent: "Services");
+      });
+    }
   } else if (cmd == "daemon-reload") {
     if (args.isNotEmpty) {
       event.reply("> Usage: ${cmd}");
@@ -227,6 +240,22 @@ systemctl(CommandEvent event) {
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
   }
+}
+
+String getColorForStatus(String status) {
+  var color = Color.DARK_GRAY;
+
+  if (status == "degraded" || status == "stopping") {
+    color = Color.RED;
+  } else if (status == "maintainence") {
+    color = Color.DARK_GRAY;
+  } else if (status == "running") {
+    color = Color.GREEN;
+  } else if (status == "initializing" || status == "starting") {
+    color = Color.YELLOW;
+  }
+
+  return color;
 }
 
 Map<String, String> parseUnitFilesList(String out) {
