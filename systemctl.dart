@@ -245,11 +245,11 @@ systemctl(CommandEvent event) {
 String getColorForStatus(String status) {
   var color = Color.DARK_GRAY;
 
-  if (status == "degraded" || status == "stopping") {
+  if (status == "degraded" || status == "stopping" || status == "failed" || status == "not-found" || status == "inactive") {
     color = Color.RED;
   } else if (status == "maintainence") {
     color = Color.DARK_GRAY;
-  } else if (status == "running") {
+  } else if (status == "running" || status == "active") {
     color = Color.GREEN;
   } else if (status == "initializing" || status == "starting") {
     color = Color.YELLOW;
