@@ -108,7 +108,7 @@ systemctl(CommandEvent event) {
       return;
     }
 
-    ProcessHelper.run("sudo", ["systemctl", "is-active", args[0]]).then((result) {
+    ProcessHelper.run("sudo", ["systemctl", "daemon-reload"]).then((result) {
       if (result.exitCode != 0) {
         event.reply("Failed to reload systemd unit files.", prefixContent: "Services");
       } else {
@@ -158,7 +158,7 @@ systemctl(CommandEvent event) {
       event.reply("> Usage: ${cmd}");
       return;
     }
-    
+
     event.replyNotice("Commands: start/stop/restart/is-active/waterfall/status/daemon-reload", prefixContent: "Services");
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
