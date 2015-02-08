@@ -111,7 +111,7 @@ systemctl(CommandEvent event) {
     ProcessHelper.getStdout("sudo", ["systemctl", "list-units", "--no-pager", "--plain", "--all"]).then((output) {
       var statuses = parseUnitFilesList(output);
 
-      DisplayHelpers.paginate(statuses.keys, 4, (page, items) {
+      DisplayHelpers.paginate(statuses.keys.toList(), 4, (page, items) {
         var buff = new StringBuffer();
         var first = true;
         for (var name in items) {
