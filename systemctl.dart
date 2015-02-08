@@ -135,7 +135,7 @@ systemctl(CommandEvent event) {
 
 Map<String, String> parseUnitFilesList(String out) {
   var lines = out.split("\n")..removeAt(0);
-  lines = lines.where((x) => x.startsWith("  ") || x.startsWith("${CIRCLE}")).map((it) {
+  lines = lines.where((x) => x.startsWith("  ") || x.startsWith("${CIRCLE}") || x.startsWith("*")).map((it) {
     return it.replaceAll("${CIRCLE}", "").trim();
   }).toList();
   lines.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
