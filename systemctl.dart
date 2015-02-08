@@ -17,7 +17,7 @@ final String YELLOW_CIRCLE = "${Color.YELLOW}${CIRCLE}${Color.RESET}";
 @Command("systemctl",
     description: "Manage System Services",
     permission: "manage",
-    usage: "start/stop/restart/is-active/status <service>"
+    usage: "<command>"
 )
 systemctl(CommandEvent event) {
   if (event.hasNoArguments) {
@@ -120,7 +120,7 @@ systemctl(CommandEvent event) {
       event.usage();
       return;
     }
-    
+
     ProcessHelper.getStdout("sudo", ["systemctl", "list-units", "--no-pager", "--plain", "--all"]).then((output) {
       var statuses = parseUnitFilesList(output);
 
@@ -153,6 +153,8 @@ systemctl(CommandEvent event) {
         event.replyNotice(buff.toString());
       });
     });
+  } else if (cmd == "help") {
+    event.replyNotice("Commands: start/stop/restart/is-active/waterfall/status/daemon-reload", prefixContent: "Services");
   } else {
     event.reply("Unknown Command", prefixContent: "Services");
   }
