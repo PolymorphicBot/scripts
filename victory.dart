@@ -1,7 +1,8 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-const List<String> victories = const [
+@Command("victory")
+victory(CommandEvent event) => event << () => event << [
   "http://thejointblog.com/wp-content/uploads/2013/04/victory.jpg",
   "http://www.quickmeme.com/img/ea/ea4671998341d9fbb6f7815394b49cb2890a50ac80b62802fb021c147c068d8e.jpg",
   "http://cdn-media.hollywood.com/images/l/victory_620_080712.jpg",
@@ -27,8 +28,3 @@ const List<String> victories = const [
   "http://rack.1.mshcdn.com/media/ZgkyMDEzLzA4LzA1LzYyL2FuY2hvcm1hbi42NjJkYS5naWYKcAl0aHVtYgk4NTB4NTkwPgplCWpwZw/009ee80f/1c0/anchorman.jpg",
   "http://rack.3.mshcdn.com/media/ZgkyMDEzLzA4LzA1LzFmL2hhcnJ5cG90dGVyLjYxNjYzLmdpZgpwCXRodW1iCTg1MHg1OTA-CmUJanBn/db79fc85/147/harry-potter.jpg"
 ];
-
-@Command("victory")
-victory(CommandEvent event) {
-  event.reply(event.chooseAtRandom(victories));
-}

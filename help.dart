@@ -5,29 +5,27 @@ export "package:polymorphic_bot/plugin.dart";
 BotConnector bot;
 
 @Command("commands", description: "Lists Commands")
-commands(CommandEvent event) {
-  bot.getCommands().then((commands) {
-    DisplayHelpers.paginate(commands, 5, (page, items) {
-      event.replyNotice("[${Color.BLUE}Commands${Color.RESET}] ${items.map((it) => it.name).join(', ')}");
-    });
+commands(CommandEvent event) async {
+  var commands = await bot.getCommands();
+  DisplayHelpers.paginate(commands, 5, (page, items) {
+    event < "[${Color.BLUE}Commands${Color.RESET}] ${items.map((it) => it.name).join(', ')}";
   });
 }
 
 @Command("command", description: "Gets Command Information", usage: "<cmd>")
-command(CommandEvent event) {
+command(CommandEvent event) async {
   if (event.argc != 1) {
     event.usage();
     return;
   }
 
-  bot.getCommand(event.args[0]).then((cmd) {
-    if (cmd == null) {
-      event.replyNotice("[${Color.BLUE}Command${Color.RESET}] No Such Command");
-      return;
-    }
+  var cmd = await bot.getCommand(event.args[0]);
 
+  if (cmd == null) {
+    event.replyNotice("[${Color.BLUE}Command${Color.RESET}] No Such Command");
+  } else {
     event.replyNotice("[${Color.BLUE}Command${Color.RESET}] Plugin: ${cmd.plugin}");
-    
+
     if (cmd.description != null) {
       event.replyNotice("[${Color.BLUE}Command${Color.RESET}] Description: ${cmd.description}");
     }
@@ -35,5 +33,5 @@ command(CommandEvent event) {
     if (cmd.usage != null) {
       event.replyNotice("[${Color.BLUE}Command${Color.RESET}] Usage: ${cmd.usage}");
     }
-  });
+  }
 }

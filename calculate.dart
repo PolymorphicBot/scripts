@@ -19,18 +19,15 @@ ContextModel context = new ContextModel()
   ..bindVariableName("pi", new Number(Math.PI));
 
 @Command("calc", description: "Calculate Math Expressions", usage: "<expression>")
-calc(CommandEvent event) {
-  if (event.args.isEmpty) {
-    event.reply("> Usage: calc <expression>");
-  } else {
-    try {
-      Expression exp = parser.parse(event.args.join(" "));
-      var answer = exp.evaluate(EvaluationType.REAL, context);
-      event.reply("${answer}", prefixContent: "Calculate");
+calc(input) {
+  try {
+    Expression exp = parser.parse(input);
 
-      context.bindVariableName("ans", new Number(answer));
-    } catch (e) {
-      event.reply("ERROR: ${e}", prefixContent: "Calculate");
-    }
+    var answer = exp.evaluate(EvaluationType.REAL, context);
+    context.bindVariableName("ans", new Number(answer));
+
+    return "[${Color.BLUE}Calculator${Color.RESET}] ${answer}";
+  } catch (e) {
+    return "[${Color.BLUE}Calculator${Color.RESET}] ERROR: ${e}";
   }
 }

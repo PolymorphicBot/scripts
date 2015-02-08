@@ -17,6 +17,4 @@ const List<String> replies = const [
 ];
  
 @OnMessage(pattern: "thank you|thanks", regex: true, ping: true)
-thanks(MessageEvent event) {
-  event.random(replies.map((it) => "${event.user}: ${it}").toList());
-}
+thanks(MessageEvent event) => event << replies.map((it) => "${event.user}: ${it}").toList();
