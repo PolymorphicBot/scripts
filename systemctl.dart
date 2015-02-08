@@ -97,10 +97,23 @@ systemctl(CommandEvent event) {
       event.usage();
       return;
     }
-  
+
     ProcessHelper.getStdout("sudo", ["systemctl", "is-active", args[0]]).then((status) {
       status = status.trim();
       event.reply("Status: ${status}", prefixContent: "Services");
+    });
+  } else if (cmd == "daemon-reload") {
+    if (args.length != 1) {
+      event.usage();
+      return;
+    }
+
+    ProcessHelper.run("sudo", ["systemctl", "is-active", args[0]]).then((result) {
+      if (result.exitCode != 0) {
+        event.reply("Failed to reload systemd unit files.", prefixContent: "Services");
+      } else {
+        event.reply("Reloaded.", prefixContent: "Services");
+      }
     });
   } else if (cmd == "waterfall") {
     if (args.isNotEmpty) {
