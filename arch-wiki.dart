@@ -7,7 +7,7 @@ archWiki(event) => event >> (input) {
     if (json.query.pages.isEmpty || json.query.pages.containsKey("-1")) {
       return "> No Wiki Page Found.";
     } else {
-      return "> ${json.query.pages[json.query.pages.keys.first].fullurl}";
+      return "> ${json.query.pages[json.query.pages.keys.first]['fullurl']}";
     }
   });
 };
