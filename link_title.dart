@@ -16,7 +16,7 @@ final RegExp YT_LINK = new RegExp(r'^.*(youtu.be/|v/|embed/|watch\?|youtube.com/
 List<String> _CONTAINS_BLACKLIST = [];
 
 @RemoteMethod(isVoid: true)
-blacklistMessage(String input) {
+blacklistMessage(String input) {  
   if (!_CONTAINS_BLACKLIST.contains(input)) {
     _CONTAINS_BLACKLIST.add(input);
   }
