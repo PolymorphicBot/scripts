@@ -26,6 +26,11 @@ void handleYouTube(MessageEvent event) {
   }
 }
 
+@NotifyPlugin("link_title", methods: const ["blacklistExpression"])
+blacklistLinkTitle(linkTitle) {
+  linkTitle.blacklistExpression(r"^.*(youtu.be/|v/|embed/|watch\?|youtube.com/user/[^#]*#([^/]*?/)*)\??v?=?([^#\&\?]*).*");
+}
+
 String extractYouTubeID(String url) {
   var first = YT_LINK_ID.firstMatch(url);
 
