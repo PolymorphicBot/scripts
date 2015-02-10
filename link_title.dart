@@ -15,6 +15,10 @@ final RegExp YT_LINK = new RegExp(r'^.*(youtu.be/|v/|embed/|watch\?|youtube.com/
 
 @OnMessage()
 void handleMessage(MessageEvent event) {
+  if (event.isCommand) {
+    return;
+  }
+  
   var msg = event.message;
   if (LINK_REGEX.hasMatch(msg)) {
     for (var match in LINK_REGEX.allMatches(msg)) {
