@@ -18,7 +18,7 @@ Parser parser = new Parser();
 ContextModel context = new ContextModel()
   ..bindVariableName("pi", new Number(Math.PI));
 
-@Command("calc", description: "Calculate Math Expressions", usage: "<expression>")
+@Command("calc", description: "Calculate Math Expressions", usage: "<expression>", prefix: "Calculator")
 calc(input) {
   try {
     Expression exp = parser.parse(input);
@@ -26,8 +26,8 @@ calc(input) {
     var answer = exp.evaluate(EvaluationType.REAL, context);
     context.bindVariableName("ans", new Number(answer));
 
-    return "[${Color.BLUE}Calculator${Color.RESET}] ${answer}";
+    return answer.toString();
   } catch (e) {
-    return "[${Color.BLUE}Calculator${Color.RESET}] ERROR: ${e}";
+    return "ERROR: ${e}";
   }
 }
