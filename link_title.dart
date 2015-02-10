@@ -13,6 +13,15 @@ final RegExp NO_SPECIAL_CHARS = new RegExp(r'''[^\w`~!@#$%^&*()\-_=+\[\]:'",<.>/
 final RegExp NO_MULTI_SPACES = new RegExp(r' {2,}');
 final RegExp YT_LINK = new RegExp(r'^.*(youtu.be/|v/|embed/|watch\?|youtube.com/user/[^#]*#([^/]*?/)*)\??v?=?([^#\&\?]*).*');
 
+List<String> _CONTAINS_BLACKLIST = [];
+
+@RemoteMethod(isVoid: true)
+blacklistMessage(String input) {
+  if (!_CONTAINS_BLACKLIST.contains(input)) {
+    _CONTAINS_BLACKLIST.add(input);
+  }
+}
+
 @OnMessage()
 void handleMessage(MessageEvent event) {
   if (event.isCommand) {
@@ -25,7 +34,7 @@ void handleMessage(MessageEvent event) {
 
       var url = match.group(0);
 
-      if (url.contains("github.com/")) {
+      if (_CONTAINS_BLACKLIST.any((it) => url.contains(it))) {
         return;
       }
 
