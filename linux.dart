@@ -8,19 +8,17 @@ Map<String, String> releaseTypes = {
   "longterm": "Longterm"
 };
 
-@Command("linux-release")
-linuxRelease(CommandEvent event) {
-  event >> (type) async {
-    if (!releaseTypes.containsKey(type)) {
-      return "Unknown Release Type";
-    }
+@Command("linux-release", description: "Linux Release Information", prefix: "Linux Release")
+linuxRelease(CommandEvent event, input) {
+  if (!releaseTypes.containsKey(input)) {
+    return "Unknown Release Type";
+  }
 
-    return event.fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
-      var release = info.getByMoniker(type);
+  return event.fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
+    var release = info.getByMoniker(input);
 
-      return "[${Color.BLUE}Linux Release${Color.RESET}] ${Color.DARK_GREEN}${release.version} released on ${friendlyDate(release.timestamp)}${release.iseol == true ? " EOL" : ""}${Color.RESET}";
-    });
-  };
+    return "${Color.DARK_GREEN}${release.version} released on ${friendlyDate(release.timestamp)}${release.iseol == true ? " EOL" : ""}${Color.RESET}";
+  });
 }
 
 class LatestVersion {

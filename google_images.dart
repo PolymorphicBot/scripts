@@ -3,8 +3,6 @@ import "dart:async";
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-import "package:path/path.dart" show extension;
-
 @PluginInstance()
 Plugin plugin;
 @BotInstance()

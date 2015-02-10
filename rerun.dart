@@ -8,21 +8,14 @@ Plugin plugin;
 BotConnector bot;
 
 @Command("rerun", description: "Reruns the last command you executed")
-rerun(CommandEvent event) {
-  if (event.hasArguments) {
-    event.usage();
+rerun(CommandEvent event) => event.getLastCommand(true).then((command) {
+  if (command == null) {
+    event.reply("No Command to Rerun.", prefixContent: "Rerun");
     return;
   }
-    
-  event.getLastCommand(true).then((command) {
-    if (command == null) {
-      event.reply("No Command to Rerun.", prefixContent: "Rerun");
-      return;
-    }
-    
-    var args = command.split(" ");
-    var cmd = args.removeAt(0);
-    
-    event.executeCommand(cmd, args);
-  });
-}
+  
+  var args = command.split(" ");
+  var cmd = args.removeAt(0);
+  
+  event.executeCommand(cmd, args);
+});
