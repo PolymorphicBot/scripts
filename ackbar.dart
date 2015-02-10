@@ -22,3 +22,7 @@ const List<String> messages = const [
 
 @OnMessage(pattern: r"it['’]?s a trap\b", regex: true)
 trap(MessageEvent event) => event.random(messages);
+
+@OnMessage(pattern: r"it['’]?s a tarp\b", regex: true)
+tarp(MessageEvent event) => "http://wp.production.patheos.com/blogs/exploringourmatrix/files/2013/08/Its-a-tarp.png";
+
