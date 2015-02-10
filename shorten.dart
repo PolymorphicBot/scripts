@@ -3,27 +3,21 @@ export "package:polymorphic_bot/plugin.dart";
 
 const String key = "AIzaSyBNTRakVvRuGHn6AVIhPXE_B3foJDOxmBU";
 
-@Command("shorten", description: "Shorten URLs with Google URL Shortener", usage: "<url>")
-shorten(CommandEvent event) {
-  if (!event.hasOneArgument) {
-    event.usage();
-    return;
-  }
-  
-  event.postJSON("https://www.googleapis.com/urlshortener/v1/url?key=${key}", {
-    "longUrl": event.args[0]
-  }).then((value) {
-    print(value);
-    
-    var url = value["id"];
-    
+@Command("shorten", description: "Shorten URLs with Google URL Shortener", usage: "<url>", prefix: "Url Shortener")
+shorten(CommandEvent event, input) async {
+  try {
+    var result = await event.postJSON("https://www.googleapis.com/urlshortener/v1/url?key=${key}", {
+      "longUrl": input
+    });
+
+    var url = result.id;
+
     if (url == null) {
-      event.reply("> Failed to Shorten URL.");
+      return "Failed to Shorten Url.";
     } else {
-      event.reply("> ${url}");
+      return url;
     }
-  }).catchError((e) {
-    print(e);
-    event.reply("> Failed to Shorten URL.");
-  });
+  } catch (e) {
+    return "Failed to Shorten Url.";
+  }
 }
