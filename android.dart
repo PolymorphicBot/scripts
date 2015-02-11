@@ -45,10 +45,14 @@ android(event) {
 
 @HttpEndpoint("/distribution.json")
 distributionJSON(request, response) {
-  var map = {};
+  var out = [];
   for (var it in data["data"]) {
-    map[it["name"]] = num.parse(it["perc"], (source) => null);
+    out.add({
+      "name": it["name"],
+      "api": it["api"],
+      "usage": num.parse(it["perc"], (source) => null)
+    });
   }
-  response.writeln(JSON.encode(map));
+  response.writeln(JSON.encode(out));
   response.close();
 }
