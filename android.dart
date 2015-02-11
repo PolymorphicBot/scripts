@@ -53,6 +53,6 @@ distributionJSON(request, response) {
       "usage": num.parse(it["perc"], (source) => null)
     });
   }
-  response.writeln(JSON.encode(out));
+  response.writeln(new JsonEncoder.withIndent("  ").convert(out));
   response.close();
 }
