@@ -74,7 +74,7 @@ checkOn(CommandEvent event) {
     return;
   }
   
-  var user = allScores.getSubStorage("${event.network}:${event.user}");
+  var user = allScores.getSubStorage("${event.network}:${event.args[0]}");
   
   if (!user.has("positive")) {
     event.reply("No History Found", prefixContent: "Sentimental");
@@ -84,7 +84,7 @@ checkOn(CommandEvent event) {
   var positive = user.getDouble("positive");
   var negative = user.getDouble("negative");
   
-  event.replyNotice("Score: ${positive - negative}");
+  event.replyNotice("Score: ${positive - negative}", prefixContent: "Sentimental");
   event.replyNotice("Positive: ${positive}", prefixContent: "Sentimental");
   event.replyNotice("Negative: ${negative}", prefixContent: "Sentimental");
 }
