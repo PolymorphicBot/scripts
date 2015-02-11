@@ -90,7 +90,7 @@ checkOn(CommandEvent event) {
 }
 
 @HttpEndpoint("/data.json")
-jsonData(request, response) {
+jsonData() {
   var keys = allScores.keys;
   var map = <String, Map<String, Map<String, dynamic>>>{};
   
@@ -112,9 +112,7 @@ jsonData(request, response) {
     };
   }
   
-  var content = new JsonEncoder.withIndent("  ").convert(map);
-  response.write(content);
-  response.close();
+  return map;
 }
 
 class Sentiment {

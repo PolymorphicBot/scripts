@@ -211,14 +211,14 @@ systemctl(CommandEvent event) async {
 }
 
 @HttpEndpoint("/status.json")
-statusJSON(HttpRequest request, HttpResponse response) async {
+statusJSON() async {
   var ctl = new SystemCTL(useSudo: true);
   var status = await ctl.getSystemStatus();
-  response.writeln(new JsonEncoder.withIndent("  ").convert({
+  
+  return {
     "system": status,
     "units": await ctl.getStatuses()
-  }));
-  response.close();
+  };
 }
 
 String getColorForStatus(String status) {

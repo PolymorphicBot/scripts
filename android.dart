@@ -44,7 +44,7 @@ android(event) {
 }
 
 @HttpEndpoint("/distribution.json")
-distributionJSON(request, response) {
+distributionJSON() {
   var out = [];
   for (var it in data["data"]) {
     out.add({
@@ -53,6 +53,5 @@ distributionJSON(request, response) {
       "usage": num.parse(it["perc"], (source) => null)
     });
   }
-  response.writeln(new JsonEncoder.withIndent("  ").convert(out));
-  response.close();
+  return out;
 }
