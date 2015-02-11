@@ -11,9 +11,7 @@ Plugin plugin;
 
 @Start()
 fetchData() {
-  plugin.httpClient.get("https://developer.android.com/about/dashboards/index.html").then((response) {
-    var body = response.body;
-  
+  fetch("https://developer.android.com/about/dashboards/index.html").then((body) {
     var start = body.indexOf("var VERSION_DATA =\n[");
     var end = body.indexOf("];", start);
     var json = body.substring(start + "var VERSION_DATA =\n[".length, end);
