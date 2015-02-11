@@ -32,3 +32,9 @@ programmer() => MESSAGES;
 
 @Command("jar", description: "Jars")
 jar() => "http://goo.gl/pmMtg3";
+
+@Command("defprogramming", description: "Gets a random quote from defprogramming.com")
+defprogramming(event) => fetchHTML("http://www.defprogramming.com/random").then(($) {
+  return $("cite a p").children[0].text.trim();
+});
+

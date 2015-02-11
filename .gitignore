@@ -4,3 +4,4 @@ packages
 .pub
 .idea/
 pubspec.yaml # We use this only for dev.
+.c9/

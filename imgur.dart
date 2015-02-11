@@ -17,7 +17,7 @@ imgur(CommandEvent event) {
     search = event.joinArguments();
   }
   
-  return event.fetchJSON("https://api.imgur.com/3/gallery/search", headers: {
+  return fetchJSON("https://api.imgur.com/3/gallery/search", headers: {
     "Authorization": "Client-ID 540678dd539a986"
   }, query: {
     "q": search

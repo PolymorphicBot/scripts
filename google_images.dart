@@ -44,7 +44,7 @@ Future<String> getGoogleImage(String query, CommandEvent event, {String type}) {
     q["imgtype"] = type;
   }
   
-  return event.fetchJSON("http://ajax.googleapis.com/ajax/services/search/images", query: q).then((response) {
+  return fetchJSON("http://ajax.googleapis.com/ajax/services/search/images", query: q).then((response) {
     List<dynamic> images = response["responseData"] == null ? [] : response["responseData"]["results"];
     
     if (images.isEmpty) {

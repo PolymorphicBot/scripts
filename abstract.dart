@@ -9,7 +9,7 @@ BotConnector bot;
 @Command("abstract", description: "Provides an abstraction of a topic.")
 abstract(CommandEvent event, input) async {
   var url = "http://api.duckduckgo.com/?format=json&q=${Uri.encodeComponent(input)}";
-  var json = await event.fetchJSON(url);
+  var json = await fetchJSON(url);
   var topic = json.RelatedTopics != null ? json.RelatedTopics[0] : null;
 
   if (json.AbstractText != null) {

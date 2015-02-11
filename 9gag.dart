@@ -2,10 +2,10 @@ import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
 @Command("9gag")
-ninegag(CommandEvent event) {
+ninegag() {
   var location = "http://9gag.com/random";
 
-  return event.fetchHTML(location).then(($) {
+  return fetchHTML(location).then(($) {
     var e = selectElement($, ["div.badge-animated-container-animated img", "a img.badge-item-img"]);
     if (e == null) {
       return "Unable to find image.";

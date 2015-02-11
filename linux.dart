@@ -9,12 +9,12 @@ Map<String, String> releaseTypes = {
 };
 
 @Command("linux-release", description: "Linux Release Information", prefix: "Linux Release")
-linuxRelease(CommandEvent event, input) {
+linuxRelease(input) {
   if (!releaseTypes.containsKey(input)) {
     return "Unknown Release Type";
   }
 
-  return event.fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
+  return fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
     var release = info.getByMoniker(input);
 
     return "${Color.DARK_GREEN}${release.version} released on ${friendlyDate(release.timestamp)}${release.iseol == true ? " EOL" : ""}${Color.RESET}";

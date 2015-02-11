@@ -98,7 +98,7 @@ translate(CommandEvent event) {
   
   var term = '"${input}"';
   
-  event.fetchJSON("https://translate.google.com/translate_a/t", transform: (String json) {
+  fetchJSON("https://translate.google.com/translate_a/t", transform: (String json) {
     return json.replaceAll(",,,", ",").replaceAll(",,", ",");
   }, query: {
     "client": "t",
