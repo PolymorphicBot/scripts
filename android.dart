@@ -42,3 +42,13 @@ android(event) {
     return;
   }
 }
+
+@HttpEndpoint("/distribution.json")
+distributionJSON(request, response) {
+  var map = {};
+  for (var it in data["data"]) {
+    map[it["name"]] = num.parse(it["perc"], (source) => null);
+  }
+  response.writeln(JSON.encode(map));
+  response.close();
+}
