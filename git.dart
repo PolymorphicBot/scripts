@@ -3,7 +3,16 @@ export "package:polymorphic_bot/plugin.dart";
 
 @Command("git-version", description: "Git Version", prefix: "Git")
 gitVersion() async {
-  var data = await fetch("https://raw.githubusercontent.com/git/git/master/RelNotes");
-  var version = data.substring("Documentation/RelNotes/".length, data.length - 4);
-  return "Version: ${version}";
+  var $ = await fetchHTML("http://git-scm.com/");
+  var version = $(".version").text.trim();
+  var reldate = $(".release-date").text.trim();
+  reldate = reldate.substring(1, reldate.length - 1);
+  return "Version: ${version} (released on ${reldate})";
+}
+
+@Command("git-flag", description: "Random Git Flag", prefix: "Git")
+gitFlag() async {
+  var $ = await fetchHTML("http://git-scm.com/");
+  var flag = $("#tagline").text.trim();
+  return "git ${flag}";
 }
