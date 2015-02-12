@@ -3,7 +3,7 @@ export "package:polymorphic_bot/plugin.dart";
 
 @Command("google", description: "Google Search", usage: "<query>", prefix: "Google")
 google(input) async {
-  var json = await fetchJSON("http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=${Uri.encodeComponent(query)}");
+  var json = await fetchJSON("http://ajax.googleapis.com/ajax/services/search/web?v=1.0&q=${Uri.encodeComponent(input)}");
   var results = json.responseData.results;
 
   if (results.length == 0) {

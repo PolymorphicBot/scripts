@@ -1,3 +1,6 @@
+import "dart:convert";
+import "dart:math";
+
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
@@ -34,7 +37,20 @@ programmer() => MESSAGES;
 jar() => "http://goo.gl/pmMtg3";
 
 @Command("defprogramming", description: "Gets a random quote from defprogramming.com")
-defprogramming(event) => fetchHTML("http://www.defprogramming.com/random").then(($) {
-  return $("cite a p").children[0].text.trim();
+defprogramming(event) => fetchHTML("http://www.defprogramming.com/random?r=${randomNumber()}").then(($) {
+  String quote = $("meta[description]").attributes["description"];
+  for (var seq in HTML_ESCAPES.keys) {
+    quote = quote.replaceAll(seq, HTML_ESCAPES[seq]);
+  }
+  return quote;
 });
 
+const Map<String, String> HTML_ESCAPES = const {
+  "&quot;": '"',
+  "&amp;": "&",
+  "&lt;": "<",
+  "&gt;": ">",
+  "&mdash;": "—"
+};
+
+randomNumber() => new Random().nextInt(999999);

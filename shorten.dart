@@ -6,7 +6,7 @@ const String key = "AIzaSyBNTRakVvRuGHn6AVIhPXE_B3foJDOxmBU";
 @Command("shorten", description: "Shorten URLs with Google URL Shortener", usage: "<url>", prefix: "Url Shortener")
 shorten(CommandEvent event, input) async {
   try {
-    var result = await event.postJSON("https://www.googleapis.com/urlshortener/v1/url?key=${key}", {
+    var result = await postJSON("https://www.googleapis.com/urlshortener/v1/url?key=${key}", {
       "longUrl": input
     });
 
