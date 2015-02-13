@@ -10,7 +10,7 @@ pigLatin(input) {
       return word;
     }
     var consonant = firstConsonant(word);
-    return word.replaceFirst(consonant, "") + consonant + "ay";
+    return consonant != null ? word.replaceFirst(consonant, "") + consonant + "ay" : word;
   }).toList().join(" ");
 }
 
