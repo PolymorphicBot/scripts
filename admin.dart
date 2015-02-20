@@ -116,6 +116,12 @@ appendTopic(CommandEvent event, input) async {
   channel.topic = channel.topic + " | ${input}";
 }
 
+@Command("topic-prepend", description: "Prepend to the Topic", permission: "topic-prepend")
+prependTopic(CommandEvent event, input) async {
+  var channel = await event.getChannel();
+  channel.topic = "${input} | " + channel.topic;
+}
+
 @Command("networks", description: "Lists the Bot Networks", prefix: "Networks")
 networks() async => (await bot.getNetworks()).join(", ");
 
