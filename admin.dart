@@ -112,14 +112,14 @@ topic(CommandEvent event) async {
 
 @Command("topic-append", description: "Append to the Topic", permission: "topic-append")
 appendTopic(CommandEvent event, input) async {
-  var channel = await event.getChannel();
-  channel.topic = channel.topic + " | ${input}";
+  var topic = await bot.getChannelTopic(event.network, event.channel);
+  bot.setChannelTopic(event.network, event.channel, topic + " | " + input);
 }
 
 @Command("topic-prepend", description: "Prepend to the Topic", permission: "topic-prepend")
 prependTopic(CommandEvent event, input) async {
-  var channel = await event.getChannel();
-  channel.topic = "${input} | " + channel.topic;
+  var topic = await bot.getChannelTopic(event.network, event.channel);
+  bot.setChannelTopic(event.network, event.channel, " | " + input + topic);
 }
 
 @Command("networks", description: "Lists the Bot Networks", prefix: "Networks")
