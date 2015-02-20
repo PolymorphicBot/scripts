@@ -10,47 +10,50 @@ Plugin plugin;
 @PluginStorage("todos")
 Storage todos;
 
-@Command("add-todo", allowVariables: true)
-addToDo(CommandEvent event) {
-  if (event.args.isEmpty) {
-    event.reply("> Usage: add-todo <message>");
-    return;
-  }
+@Command("add-todo", description: "Add a TODO Item", prefix: "TODO", allowVariables: true)
+addToDo(CommandEvent event, input) async {
+  var user = await event.getUsername();
 
-  todos.addToList("${event.network}:${event.user}", event.args.join(" "));
-  event.replyNotice("Added to TODO list as #${todos.getList("${event.network}:${event.user}").length}", prefixContent: "TODO");
+  todos.addToList("${event.network}:${user}", input);
+  event < "Added to TODO list as #${todos.getList("${event.network}:${user}").length}";
 }
 
-@Command("todos")
+@Command("todos", description: "List TODO Items", prefix: "TODO")
 listToDos(CommandEvent event) {
-  var l = todos.getList("${event.network}:${event.user}", defaultValue: []);
+  event >> () async {
+    var user = await event.getUsername();
+      
+      var l = todos.getList("${event.network}:${user}", defaultValue: []);
 
-  if (l.isEmpty) {
-    event.replyNotice("No TODOs.", prefixContent: "TODO");
-  } else {
-    int i = 0;
-    for (var t in l) {
-      i++;
-      event.replyNotice("${i}. ${t}", prefixContent: "TODO");
-    }
-  }
+      if (l.isEmpty) {
+        event < "No TODOs.";
+      } else {
+        int i = 0;
+        for (var t in l) {
+          i++;
+          event < "${i}. ${t}";
+        }
+      }
+  };
 }
 
-@Command("remove-todo")
-removeToDo(CommandEvent event) {
+@Command("remove-todo", description: "Remove a TODO Item", prefix: "TODO")
+removeToDo(CommandEvent event) async {
   if (event.args.length != 1) {
-    event.reply("> Usage: remove-todo <number>");
+    event << "Usage: remove-todo <number>";
     return;
   }
+  
+  var user = await event.getUsername();
 
-  var l = todos.getList("${event.network}:${event.user}");
+  var l = todos.getList("${event.network}:${user}");
   try {
     l.removeAt(int.parse(event.args[0]) - 1);
   } catch (e) {
-    event.replyNotice("Invalid TODO Number", prefixContent: "TODO");
+    event < "Invalid TODO Number";
     return;
   }
-  todos.setList("${event.network}:${event.user}", l);
+  todos.setList("${event.network}:${user}", l);
 
-  event.replyNotice("Item #${event.args[0]} removed", prefixContent: "TODO");
+  event < "Item #${event.args[0]} removed";
 }
