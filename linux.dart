@@ -16,6 +16,10 @@ linuxRelease(input) {
 
   return fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
     var release = info.getByMoniker(input);
+    
+    if (release == null) {
+      return "Unknown Release Type";
+    }
 
     return "${Color.DARK_GREEN}${release.version} released on ${friendlyDate(release.timestamp)}${release.iseol == true ? " EOL" : ""}${Color.RESET}";
   });
