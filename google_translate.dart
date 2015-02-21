@@ -99,7 +99,6 @@ translate(CommandEvent event) {
   var term = '"${input}"';
   
   fetchJSON("https://translate.google.com/translate_a/t", transform: (String json) {
-    print(json);
     return json.replaceAll(",,,", ",").replaceAll(",,", ",").replaceAll(",,", ",");
   }, query: {
     "client": "t",
@@ -115,7 +114,13 @@ translate(CommandEvent event) {
   }, headers: {
     "User-Agent": "Mozilla/5.0"
   }).then((List<dynamic> response) {
-    var language = languages[response[1]];
+    String language;
+    if (from == "auto") {
+      language = languages[languages[response[1]]];
+    } else {
+      language = languages[from];
+    }
+    
     String translated = response[0][0] is String ? response[0][0] : response[0][0][0];
 
     translated = '"' + translated.substring(1, translated.length - 1).trim() + '"';
@@ -129,7 +134,11 @@ translate(CommandEvent event) {
         translated = tmp;
       }
       
-      event.reply("${term} is ${language} for ${translated}", prefixContent: "Google Translate");
+      if (to == "en") {
+        event.reply("${translated} is ${languages[response[1]]} for ${term}", prefixContent: "Google Translate");        
+      } else {
+        event.reply("${term} is ${language} for ${translated}", prefixContent: "Google Translate"); 
+      }
     } else {
       event.reply("${term} in ${languages[from]} translates to ${translated} in ${languages[to]}", prefixContent: "Google Translate");
     }
