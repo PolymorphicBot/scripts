@@ -116,7 +116,7 @@ translate(CommandEvent event) {
   }).then((List<dynamic> response) {
     String language;
     if (from == "auto") {
-      language = languages[languages[response[1]]];
+      language = languages[response[1]];
     } else {
       language = languages[from];
     }
@@ -126,6 +126,10 @@ translate(CommandEvent event) {
     translated = '"' + translated.substring(1, translated.length - 1).trim() + '"';
     translated = translated.replaceAll(" .", ".");
     
+    if (language == "English" && from == "auto" && term != translated) {
+      language = languages[response[2]];
+    }
+    
     if (from == "auto") {
       if (language == null) {
         language = languages[to];
@@ -134,8 +138,8 @@ translate(CommandEvent event) {
         translated = tmp;
       }
       
-      if (to == "en") {
-        event.reply("${translated} is ${languages[response[1]]} for ${term}", prefixContent: "Google Translate");        
+      if (to == "en" && from != "auto") {
+        event.reply("${translated} is ${language} for ${term}", prefixContent: "Google Translate");        
       } else {
         event.reply("${term} is ${language} for ${translated}", prefixContent: "Google Translate"); 
       }
