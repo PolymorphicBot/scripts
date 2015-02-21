@@ -10,6 +10,7 @@ Map<String, String> releaseTypes = {
 
 @Command("linux-release", description: "Linux Release Information", prefix: "Linux Release")
 linuxRelease(input) {
+  
   if (!releaseTypes.containsKey(input)) {
     return "Unknown Release Type";
   }
@@ -18,7 +19,11 @@ linuxRelease(input) {
     var release = info.getByMoniker(input);
     
     if (release == null) {
-      return "Unknown Release Type";
+      if (input == "next") {
+        release = info.getByMoniker("linux-next");
+      } else {
+        return "Unknown Release Type";
+      }
     }
 
     return "${Color.DARK_GREEN}${release.version} released on ${friendlyDate(release.timestamp)}${release.iseol == true ? " EOL" : ""}${Color.RESET}";
