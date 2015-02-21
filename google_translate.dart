@@ -77,7 +77,7 @@ translate(CommandEvent event) {
   
   var input = event.joinArgs();
   var codes = (new List<String>.from(languages.keys)..addAll(languages.values)..sort()).join("|");
-  var regex = new RegExp("(?:from (${codes}))?(?:(?: )?(?:in)?to (${codes}))? (.+)");
+  var regex = new RegExp("(?:from (${codes}))?(?:(?: )?(?:in)?to (${codes}))? ?(.+)");
   
   var from = "auto";
   var to = "en";
@@ -99,7 +99,8 @@ translate(CommandEvent event) {
   var term = '"${input}"';
   
   fetchJSON("https://translate.google.com/translate_a/t", transform: (String json) {
-    return json.replaceAll(",,,", ",").replaceAll(",,", ",");
+    print(json);
+    return json.replaceAll(",,,", ",").replaceAll(",,", ",").replaceAll(",,", ",");
   }, query: {
     "client": "t",
     "hl": "en",
@@ -114,10 +115,11 @@ translate(CommandEvent event) {
   }, headers: {
     "User-Agent": "Mozilla/5.0"
   }).then((List<dynamic> response) {
-    var language = languages[response[2]];
+    var language = languages[response[1]];
     String translated = response[0][0] is String ? response[0][0] : response[0][0][0];
 
     translated = '"' + translated.substring(1, translated.length - 1).trim() + '"';
+    translated = translated.replaceAll(" .", ".");
     
     if (from == "auto") {
       if (language == null) {
