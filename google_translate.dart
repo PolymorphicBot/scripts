@@ -68,7 +68,7 @@ const Map<String, String> languages = const {
   "yi": "Yiddish"
 };
 
-@Command("translate")
+@Command("translate", allowVariables: true)
 translate(CommandEvent event) {
   if (event.hasNoArguments) {
     event.usage();
