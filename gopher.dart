@@ -1,7 +1,7 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("gopher", description: "Gopher")
+@Command("gopher", description: "Gopher", randomize: true)
 gopher() => [
   'http://25.media.tumblr.com/tumblr_m6k6iluYFU1qa4vxjo1_500.jpg',
   'http://www.sixprizes.com/wp-content/uploads/gopher_caddyshack.jpg',

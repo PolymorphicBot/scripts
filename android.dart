@@ -29,7 +29,6 @@ android(event) {
   var m = data["data"];
   
   var cmd = event.args[0];
-  var args = event.dropArguments(1);
   
   if (cmd == "distribution") {
     for (var it in m) {

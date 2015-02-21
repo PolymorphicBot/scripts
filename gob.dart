@@ -1,7 +1,7 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("gob", description: "GOB")
+@Command("gob", description: "GOB", randomize: true)
 gob() => [
   "http://bite-prod.s3.amazonaws.com/wp-content/uploads/2012/05/chicken-dance-2.gif",
   "http://bite-prod.s3.amazonaws.com/wp-content/uploads/2012/05/Gob.gif",

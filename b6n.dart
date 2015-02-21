@@ -1,7 +1,7 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("b6n")
+@Command("b6n", description: "Random b6n quote", randomize: true)
 alot() => [
   "reading is fundamental",
   "apparently it’s a bad idea to run a large database on a handful of puny rackspace cloud instances.\nwho knew?",
@@ -13,8 +13,8 @@ alot() => [
   "yeah, so, if you could never say \"shard\" again in the context of a dynamo system that’d be awesome",
   "that’s not scale, that’s a rails app.",
   "right, i see your problem now. you are doing soemthing terrible.",
-  "yes, many things can be done with enough of the right code\nbut resources are finite\ndirectly accessing a database from the front end app like that is just poor practice. put a service in front of it that exposes an app-appropriate interface (NOT a native db interface)\nas needed, swap out backend\nas needed, scale out that layer"
-      "the code provided with cassandra works. yours doesn’t. ergo, the problem is in your code.",
+  "yes, many things can be done with enough of the right code\nbut resources are finite\ndirectly accessing a database from the front end app like that is just poor practice. put a service in front of it that exposes an app-appropriate interface (NOT a native db interface)\nas needed, swap out backend\nas needed, scale out that layer",
+  "the code provided with cassandra works. yours doesn’t. ergo, the problem is in your code.",
   "what i said is either do it properly or not at all.",
   "you didn’t just believe some bullshit in techcrunch, did you?",
   "you put an APP written in a REAL LANGUAGE in front of the data store\nit exposes an interface specific to your FRONT END",

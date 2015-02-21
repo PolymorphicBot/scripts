@@ -12,18 +12,14 @@ Storage todos;
 
 @Command("add-todo", description: "Add a TODO Item", prefix: "TODO", allowVariables: true)
 addToDo(CommandEvent event, input) async {
-  var user = await event.getUsername();
-
-  todos.addToList("${event.network}:${user}", input);
-  event < "Added to TODO list as #${todos.getList("${event.network}:${user}").length}";
+  todos.addToList("${event.network}:${event.username}", input);
+  event < "Added to TODO list as #${todos.getList("${event.network}:${event.username}").length}";
 }
 
 @Command("todos", description: "List TODO Items", prefix: "TODO")
 listToDos(CommandEvent event) {
   event >> () async {
-    var user = await event.getUsername();
-      
-      var l = todos.getList("${event.network}:${user}", defaultValue: []);
+      var l = todos.getList("${event.network}:${event.username}", defaultValue: []);
 
       if (l.isEmpty) {
         event < "No TODOs.";
@@ -43,17 +39,15 @@ removeToDo(CommandEvent event) async {
     event << "Usage: remove-todo <number>";
     return;
   }
-  
-  var user = await event.getUsername();
 
-  var l = todos.getList("${event.network}:${user}");
+  var l = todos.getList("${event.network}:${event.username}");
   try {
     l.removeAt(int.parse(event.args[0]) - 1);
   } catch (e) {
     event < "Invalid TODO Number";
     return;
   }
-  todos.setList("${event.network}:${user}", l);
+  todos.setList("${event.network}:${event.username}", l);
 
   event < "Item #${event.args[0]} removed";
 }
