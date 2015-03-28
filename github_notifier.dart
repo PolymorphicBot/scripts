@@ -11,7 +11,7 @@ BotConnector bot;
 @Start()
 fetchConfig() async {
   config = await bot.getConfig();
-  
+
   if (config["github"] == null) {
     config["github"] = {};
   }
@@ -329,11 +329,9 @@ handleHook(HttpRequest request, HttpResponse response) async {
       break;
 
     case "team_add":
-      var added_user = false;
       var team = json["team"];
       var msg = "";
       if (json["user"] != null) {
-        added_user = true;
         msg +=
             "${Color.OLIVE}${json["sender"]["login"]}${Color.RESET} has added ";
         msg +=
@@ -346,7 +344,7 @@ handleHook(HttpRequest request, HttpResponse response) async {
       handled = false;
       break;
   }
-  
+
   response.writeln(encodeJSON({
     "handled": handled
   }, pretty: true));
