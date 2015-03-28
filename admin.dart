@@ -23,10 +23,10 @@ join(CommandEvent event) {
   if (event.args.length > 2 || event.args.isEmpty) {
     return "> Usage: join [network] <channel>";
   }
-  
+
   var network = event.args.length == 2 ? event.args[0] : event.network;
   var channel = event.args.length == 2 ? event.args[1] : event.args[0];
-  
+
   bot.joinChannel(network, channel);
 }
 
@@ -35,10 +35,10 @@ part(CommandEvent event) {
   if (event.args.length > 2) {
     return "> Usage: part [network] [channel]";
   }
-  
+
   String network;
   String channel;
-  
+
   if (event.argc == 0) {
     network = event.network;
     channel = event.channel;
@@ -49,9 +49,9 @@ part(CommandEvent event) {
     network = event.args[0];
     channel = event.args[1];
   }
-  
+
   if (channel == null) channel = event.channel;
-  
+
   bot.partChannel(network, channel);
 }
 
@@ -60,10 +60,10 @@ cycle(CommandEvent event) {
   if (event.args.length > 2) {
     return "> Usage: cycle [network] [channel]";
   }
-  
+
   String network;
   String channel;
-  
+
   if (event.argc == 0) {
     network = event.network;
     channel = event.channel;
@@ -74,9 +74,9 @@ cycle(CommandEvent event) {
     network = event.args[0];
     channel = event.args[1];
   }
-  
+
   if (channel == null) channel = event.channel;
-  
+
   bot.partChannel(network, channel);
   bot.joinChannel(network, channel);
 }
@@ -104,9 +104,9 @@ topic(CommandEvent event) async {
   if (event.hasNoArguments) {
     return await bot.getChannelTopic(event.network, event.channel);
   } else {
-    bot.checkPermission((_) {
+    bot.checkPermission(event.network, event.channel, event.user, "topic").then((_) {
       bot.setChannelTopic(event.network, event.channel, event.joinArguments());
-    }, event.network, event.channel, event.user, "topic");
+    });
   }
 }
 

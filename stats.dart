@@ -52,7 +52,6 @@ stats(CommandEvent event) {
     if (users.isNotEmpty) {
       var most = users.first['name'];
       var actives = (users.take(6).toList()..removeAt(0)).map((it) => it['name']);
-      var least = users.last['name'];
 
       event.replyNotice("Most Active User on ${event.channel}: ${most}", prefix: true, prefixContent: "Statistics");
 

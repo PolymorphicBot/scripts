@@ -1041,7 +1041,13 @@ XGfVogY.jpg
 List<String> urls;
 
 @Start()
-splitFilesnames() => urls = FILENAMES.split("\n").where((it) => it.trim().isNotEmpty).map((it) => "http://mraof.com/LIZARDS/${it}").toList();
+splitFilesnames() {
+  urls = FILENAMES
+    .split("\n")
+    .where((it) => it.trim().isNotEmpty)
+    .map((it) => "http://mraof.com/LIZARDS/${it}")
+    .toList();
+}
 
 @Command("lizard", description: "Gives you a lizard.")
 lizard() => urls;

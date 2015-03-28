@@ -34,9 +34,9 @@ const List<String> words = const [
 
 bool hasCussing(String msg) {
   var w = (<String>[]..addAll(words)..addAll(storage.getList("words", defaultValue: []))).map((it) => it.toLowerCase().trim());
-  
+
   msg = msg.toLowerCase().trim();
-  
+
   return w.any((word) {
     return msg.startsWith("${word} ") || msg == word || msg.contains(" ${word} ") || msg.endsWith(" ${word}");
   });
@@ -47,15 +47,13 @@ handleMessage(MessageEvent event) {
   if (!hasCussing(event.message)) {
     return;
   }
-  
+
   void warn(int i) {
-    var m = "#${i}";
-    
     bot.sendNotice(event.network, event.user, "[${Color.BLUE}Cussing${Color.RESET}] Warning: Cussing is not allowed in this channel. Strike #${i}.");
   }
-  
+
   var x = tracker.incrementInteger("${event.network}:${event.user}");
-  
+
   if (x == 3) {
     event.kickBanUser(reason: "Cussing");
     bot.sendNotice(event.network, event.user, "[${Color.BLUE}Cussing${Color.RESET}] You have been banned in ${event.channel} for cussing.");
