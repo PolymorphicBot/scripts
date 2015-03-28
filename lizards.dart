@@ -1049,5 +1049,5 @@ splitFilesnames() {
     .toList();
 }
 
-@Command("lizard", description: "Gives you a lizard.")
+@Command("lizard", description: "Gives you a lizard.", randomize: true)
 lizard() => urls;
