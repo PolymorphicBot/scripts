@@ -58,9 +58,7 @@ String getRepoOwner(Map<String, dynamic> repo) {
 
 @HttpEndpoint("/hook")
 handleHook(HttpRequest request, HttpResponse response) async {
-  var body = (await HttpBodyHandler.processRequest(request)).body;
-  var json = parseJSON(body);
-
+  var json = (await HttpBodyHandler.processRequest(request)).body;
   var handled = true;
 
   var repoName;
