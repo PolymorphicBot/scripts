@@ -1,21 +1,13 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-Map<String, dynamic> config;
+@PluginStorage("config")
+Storage config;
 
 @PluginInstance()
 Plugin plugin;
 @BotInstance()
 BotConnector bot;
-
-@Start()
-fetchConfig() async {
-  config = await bot.getConfig();
-
-  if (config["github"] == null) {
-    config["github"] = {};
-  }
-}
 
 Map<String, dynamic> STATUS_CI = {};
 
@@ -36,15 +28,14 @@ String getRepoName(Map<String, dynamic> repo) {
 }
 
 List<String> channelsFor(String id) {
-  var ghConf = config["github"];
-  if (ghConf["channels"] != null && ghConf["channels"].containsKey(id)) {
-    var chans = ghConf["channels"][id];
-    if (chans is String) {
-      chans = [chans];
-    }
-    return chans;
+  var chans = config.getSubStorage("channels");
+
+  if (chans.has(id)) {
+    return chans.getList(id);
+  } else if (config.has("default_channels")) {
+    return config.getList("default_channels");
   } else {
-    return ghConf["default_channels"];
+    return [];
   }
 }
 
@@ -54,6 +45,10 @@ String getRepoOwner(Map<String, dynamic> repo) {
   } else {
     return repo["owner"]["login"];
   }
+}
+
+String getOrganization() {
+  return config.has("organization") ? config.getString("organization") : null;
 }
 
 @HttpEndpoint("/hook")
@@ -66,12 +61,12 @@ handleHook(HttpRequest request, HttpResponse response) async {
   if (json["repository"] != null) {
     var name = getRepoName(json["repository"]);
 
-    var names = config["github"]["names"];
+    var names = config.getSubStorage("names");
 
-    if (names != null && names.containsKey(name)) {
-      repoName = names[name];
+    if (names.has(name)) {
+      repoName = names.getString("name");
     } else {
-      if (getRepoOwner(json["repository"]) != "DirectMyFile") {
+      if (getOrganization() != null) {
         repoName = name;
       } else {
         repoName = json["repository"]["name"];
