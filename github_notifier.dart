@@ -31,9 +31,9 @@ List<String> channelsFor(String id) {
   var chans = config.getSubStorage("channels");
 
   if (chans.has(id)) {
-    return chans.getList(id);
+    return chans.getList(id, defaultValue: []);
   } else if (config.has("default_channels")) {
-    return config.getList("default_channels");
+    return config.getList("default_channels", defaultValue: []);
   } else {
     return [];
   }
@@ -98,6 +98,7 @@ handleHook(HttpRequest request, HttpResponse response) async {
       var tagName = "";
       var isBranch = false;
       var isTag = false;
+      
       if (refRegex.hasMatch(json["ref"])) {
         var match = refRegex.firstMatch(json["ref"]);
         var _type = match.group(1);
@@ -110,6 +111,7 @@ handleHook(HttpRequest request, HttpResponse response) async {
           tagName = match.group(2);
         }
       }
+
       if (json["commits"] != null && json["commits"].length != 0) {
         if (json['repository']['fork']) break;
         var pusher = json['pusher']['name'];
