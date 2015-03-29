@@ -51,7 +51,7 @@ String getOrganization() {
   return config.has("organization") ? config.getString("organization") : null;
 }
 
-@Command("github-notify", prefix: "GitHub Notifier")
+@Command("github-notify", prefix: "GitHub Notifier", permission: "manage")
 githubNotify(CommandEvent event) {
   return event.subcommands({
     "add-default-channel": (List<String> args) {
