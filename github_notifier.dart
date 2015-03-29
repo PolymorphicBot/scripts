@@ -51,6 +51,53 @@ String getOrganization() {
   return config.has("organization") ? config.getString("organization") : null;
 }
 
+@Command("github-notify", prefix: "GitHub Notifier")
+githubNotify(CommandEvent event) {
+  return event.subcommands({
+    "add-default-channel": (List<String> args) {
+      if (args.length != 2) {
+        return "Usage: github-notify add-default-channel <network> <channel>";
+      }
+
+      var id = "${args[0]}:${args[1]}";
+
+      if (config.isInList("default_channels", id)) {
+        return "Channel is already a default channel.";
+      }
+
+      config.addToList("default_channels", id);
+
+      return "Default Channel Added";
+    },
+    "remove-default-channel": (List<String> args) {
+      if (args.length != 2) {
+        return "Usage: github-notify remove-default-channel <network> <channel>";
+      }
+
+      var id = "${args[0]}:${args[1]}";
+
+      if (!config.isInList("default_channels", id)) {
+        return "Channel is not a default channel.";
+      }
+
+      config.removeFromList("default_channels", id);
+
+      return "Default Channel Removed";
+    },
+    "list-default-channels": (List<String> args) {
+      if (args.isNotEmpty) {
+        return "Usage: github-notify list-default-channels";
+      }
+
+      event.replyNotice("Default Channels:");
+
+      DisplayHelpers.paginate(config.getList("default_channels", defaultValue: []), 5, (page, items) {
+        event.replyNotice("${items.map((it) => "${networkOf(it)} -> ${channelOf(it)}").join(", ")}");
+      });
+    }
+  });
+}
+
 @HttpEndpoint("/hook")
 handleHook(HttpRequest request, HttpResponse response) async {
   var json = (await HttpBodyHandler.processRequest(request)).body;
@@ -98,7 +145,7 @@ handleHook(HttpRequest request, HttpResponse response) async {
       var tagName = "";
       var isBranch = false;
       var isTag = false;
-      
+
       if (refRegex.hasMatch(json["ref"])) {
         var match = refRegex.firstMatch(json["ref"]);
         var _type = match.group(1);
