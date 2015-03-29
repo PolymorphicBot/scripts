@@ -53,7 +53,7 @@ String getOrganization() {
 
 @Command("github-notify", prefix: "GitHub Notifier", permission: "manage")
 githubNotify(CommandEvent event) {
-  return event.subcommands({
+  var subs = {
     "add-default-channel": (List<String> args) {
       if (args.length != 2) {
         return "Usage: github-notify add-default-channel <network> <channel>";
@@ -95,7 +95,19 @@ githubNotify(CommandEvent event) {
         event.replyNotice("${items.map((it) => "${networkOf(it)} -> ${channelOf(it)}").join(", ")}");
       });
     }
-  });
+  };
+
+  if (event.hasNoArguments) {
+    return "Usage: github-notify <command>";
+  }
+
+  var cmd = event.args[0];
+
+  if (!subs.containsKey(cmd)) {
+    return "Usage: github-notify <command>";
+  }
+
+  return subs[cmd](event.dropArguments(1));
 }
 
 @HttpEndpoint("/hook")
