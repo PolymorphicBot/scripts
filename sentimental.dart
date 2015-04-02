@@ -26,7 +26,7 @@ Sentiment getNegativity(String phrase) {
   var hits = 0;
   var w = [];
   var tokens = noPunctuation.toLowerCase().split(" ");
-  
+
   for (var token in tokens) {
     if (words.containsKey(token)) {
       if (words[token] < 0) {
@@ -35,7 +35,7 @@ Sentiment getNegativity(String phrase) {
       }
     }
   }
-  
+
   return new Sentiment(hits, hits / tokens.length, w);
 }
 
@@ -44,7 +44,7 @@ Sentiment getPositivity(String phrase) {
   var hits = 0;
   var w = [];
   var tokens = noPunctuation.toLowerCase().split(" ");
-  
+
   for (var token in tokens) {
     if (words.containsKey(token)) {
       if (words[token] > 0) {
@@ -53,7 +53,7 @@ Sentiment getPositivity(String phrase) {
       }
     }
   }
-  
+
   return new Sentiment(hits, hits / tokens.length, w);
 }
 
@@ -69,21 +69,20 @@ analyze(MessageEvent event) {
 
 @Command("checkon")
 checkOn(CommandEvent event) {
-  if (!event.hasOneArgument) {
-    event.usage();
-    return;
+  if (event.args.length != 1) {
+    return "Usage: checkon <user>";
   }
-  
+
   var user = allScores.getSubStorage("${event.network}:${event.args[0]}");
-  
+
   if (!user.has("positive")) {
     event.reply("No History Found", prefixContent: "Sentimental");
-    return;
+    return null;
   }
-  
+
   var positive = user.getDouble("positive");
   var negative = user.getDouble("negative");
-  
+
   event.replyNotice("Score: ${positive - negative}", prefixContent: "Sentimental");
   event.replyNotice("Positive: ${positive}", prefixContent: "Sentimental");
   event.replyNotice("Negative: ${negative}", prefixContent: "Sentimental");
@@ -93,25 +92,25 @@ checkOn(CommandEvent event) {
 jsonData() {
   var keys = allScores.keys;
   var map = <String, Map<String, Map<String, dynamic>>>{};
-  
+
   for (var key in keys) {
     var split = key.split(":");
     var network = split[0];
     var user = split[1];
-    
+
     if (!map.containsKey(network)) {
       map[network] = {};
     }
-    
+
     var u = allScores.getSubStorage(key);
-    
+
     map[network][user] = {
-      "positive": u.getDouble("positive"),
-      "negative": u.getDouble("negative"),
-      "score": u.getDouble("positive") - u.getDouble("negative")
+      "positive": u.getDouble("positive", defaultValue: 0.0),
+      "negative": u.getDouble("negative", defaultValue: 0.0),
+      "score": u.getDouble("positive", defaultValue: 0.0) - u.getDouble("negative", defaultValue: 0.0)
     };
   }
-  
+
   return map;
 }
 
@@ -119,6 +118,6 @@ class Sentiment {
   final int score;
   final num comparative;
   final List<String> words;
-  
+
   Sentiment(this.score, this.comparative, this.words);
 }
