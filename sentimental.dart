@@ -80,8 +80,8 @@ checkOn(CommandEvent event) {
     return null;
   }
 
-  var positive = user.getDouble("positive");
-  var negative = user.getDouble("negative");
+  var positive = user.getDouble("positive", defaultValue: 0.0);
+  var negative = user.getDouble("negative", defaultValue: 0.0);
 
   event.replyNotice("Score: ${positive - negative}", prefixContent: "Sentimental");
   event.replyNotice("Positive: ${positive}", prefixContent: "Sentimental");
