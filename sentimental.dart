@@ -67,7 +67,7 @@ analyze(MessageEvent event) {
   scores.addToDouble("positive", positive.score, defaultValue: 0.0);
 }
 
-@Command("checkon")
+@Command("checkon", prefix: "Sentimental")
 checkOn(CommandEvent event) {
   if (event.args.length != 1) {
     return "Usage: checkon <user>";
@@ -75,17 +75,18 @@ checkOn(CommandEvent event) {
 
   var user = allScores.getSubStorage("${event.network}:${event.args[0]}");
 
-  if (!user.has("positive")) {
-    event.reply("No History Found", prefixContent: "Sentimental");
-    return null;
+  if (!user.has("positive") || !user.has("negative")) {
+    return "No History Found";
   }
 
   var positive = user.getDouble("positive", defaultValue: 0.0);
   var negative = user.getDouble("negative", defaultValue: 0.0);
 
-  event.replyNotice("Score: ${positive - negative}", prefixContent: "Sentimental");
-  event.replyNotice("Positive: ${positive}", prefixContent: "Sentimental");
-  event.replyNotice("Negative: ${negative}", prefixContent: "Sentimental");
+  return [
+    "Score: ${positive - negative}",
+    "Positive: ${positive}",
+    "Negative: ${negative}"
+  ];
 }
 
 @HttpEndpoint("/data.json")
