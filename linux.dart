@@ -8,7 +8,7 @@ Map<String, String> releaseTypes = {
   "longterm": "Longterm"
 };
 
-@Command("linux-release", description: "Linux Release Information", prefix: "Linux Release")
+@Command("linux-release", description: "Linux Release Information", prefix: "Linux Release", usage: "<stable/mainline/next/longterm>")
 linuxRelease(input) {
   if (!releaseTypes.containsKey(input)) {
     return "Unknown Release Type";
@@ -16,7 +16,7 @@ linuxRelease(input) {
 
   return fetchJSON("https://www.kernel.org/releases.json", type: ReleaseInfo).then((ReleaseInfo info) {
     var release = info.getByMoniker(input);
-    
+
     if (release == null) {
       if (input == "next" && info.getByMoniker("linux-next") != null) {
         release = info.getByMoniker("linux-next");
