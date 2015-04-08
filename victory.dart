@@ -1,8 +1,8 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("victory")
-victory(CommandEvent event) => event << () => event << [
+@Command("victory", randomize: true)
+victory() => [
   "http://thejointblog.com/wp-content/uploads/2013/04/victory.jpg",
   "http://www.quickmeme.com/img/ea/ea4671998341d9fbb6f7815394b49cb2890a50ac80b62802fb021c147c068d8e.jpg",
   "http://cdn-media.hollywood.com/images/l/victory_620_080712.jpg",

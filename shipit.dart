@@ -1,7 +1,7 @@
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
-@Command("shipit")
+@Command("shipit", randomize: true)
 shipit(CommandEvent event) => [
   "https://img.skitch.com/20111026-r2wsngtu4jftwxmsytdke6arwd.png",
   "http://images.cheezburger.com/completestore/2011/11/2/aa83c0c4-2123-4bd3-8097-966c9461b30c.jpg",

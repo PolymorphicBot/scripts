@@ -29,7 +29,7 @@ const List<String> MESSAGES = const [
   "http://goo.gl/g8lrWn"
 ];
 
-@Command("programmer", description: "Programmer Stuff")
+@Command("programmer", description: "Programmer Stuff", randomize: true)
 programmer() => MESSAGES;
 
 @Command("jar", description: "Jars")
