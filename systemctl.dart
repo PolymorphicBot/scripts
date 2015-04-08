@@ -331,6 +331,10 @@ class SystemCTL {
         continue;
       }
 
+      if (!all) {
+        name = name.substring(0, name.indexOf(".service"));
+      }
+
       map[name] = status;
     }
     return map;
