@@ -15,8 +15,17 @@ final RegExp NO_MULTI_SPACES = new RegExp(r' {2,}');
 List<String> _CONTAINS_BLACKLIST = [];
 List<RegExp> _EXPRESSIONS = [];
 
+@Command("toggle-link-title", description: "Toggle Link Titles in the Current Channel", permission: "toggle", prefix: "Link Title")
+toggleLinkTitle(CommandEvent event) {
+  var meta = event.getChannelMetadata();
+  var x = meta.getBoolean("link-title.enabled", defaultValue: true);
+  x = !x;
+  meta.setBoolean("link-title.enabled", x);
+  return "Link Titles are now ${x ? "on" : "off"}.";
+}
+
 @RemoteMethod(isVoid: true)
-blacklistMessage(String input) {  
+blacklistMessage(String input) {
   if (!_CONTAINS_BLACKLIST.contains(input)) {
     _CONTAINS_BLACKLIST.add(input);
   }
@@ -32,7 +41,11 @@ void handleMessage(MessageEvent event) {
   if (event.isCommand) {
     return;
   }
-  
+
+  if (!event.getChannelMetadata().getBoolean("link-title.enabled", defaultValue: true)) {
+    return;
+  }
+
   var msg = event.message;
   if (LINK_REGEX.hasMatch(msg)) {
     for (var match in LINK_REGEX.allMatches(msg)) {
@@ -42,16 +55,16 @@ void handleMessage(MessageEvent event) {
       if (_CONTAINS_BLACKLIST.any((it) => url.contains(it))) {
         return;
       }
-      
+
       if (_EXPRESSIONS.any((it) => it.hasMatch(url))) {
         return;
       }
-      
+
       getLinkTitle(url).then((title) {
         if (title == null || title.toString() == "null") {
           return;
         }
-        
+
         event.reply(title, prefixContent: "Link Title");
       }).catchError((e) {});
     }
