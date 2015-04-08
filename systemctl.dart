@@ -213,7 +213,7 @@ systemctl(CommandEvent event) async {
 statusJSON() async {
   var ctl = new SystemCTL(useSudo: true);
   var status = await ctl.getSystemStatus();
-  
+
   return {
     "system": status,
     "units": await ctl.getStatuses()
@@ -291,10 +291,18 @@ class SystemCTL {
     return (await run(["is-active", service])).stdout.trim();
   }
 
-  Future<Map<String, String>> getStatuses() async {
+  Future<Map<String, String>> getStatuses({bool all: false}) async {
     var result = await run(["list-units", "--no-pager", "--plain", "--all"]);
     var out = result.stdout.trim();
-    return _parseUnitFilesList(out);
+    var o = _parseUnitFilesList(out);
+    List rm;
+    if (all) {
+      rm = [];
+    } else {
+      rm = o.keys.where((name) => name.endsWith(".service") || name.contains("@") || name.startsWith("systemd-")).toList();
+    }
+    rm.forEach(o.remove);
+    return o;
   }
 
   Future<String> getSystemStatus() async =>
