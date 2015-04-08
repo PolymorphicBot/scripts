@@ -294,15 +294,7 @@ class SystemCTL {
   Future<Map<String, String>> getStatuses({bool all: false}) async {
     var result = await run(["list-units", "--no-pager", "--plain", "--all"]);
     var out = result.stdout.trim();
-    var o = _parseUnitFilesList(out);
-    List rm;
-    if (all) {
-      rm = [];
-    } else {
-      rm = o.keys.where((name) => name.endsWith(".service") || name.contains("@") || name.startsWith("systemd-")).toList();
-    }
-    rm.forEach(o.remove);
-    return o;
+    return _parseUnitFilesList(out, all: all);
   }
 
   Future<String> getSystemStatus() async =>
@@ -318,7 +310,7 @@ class SystemCTL {
         : Process.run("systemctl", args);
   }
 
-  Map<String, String> _parseUnitFilesList(String out) {
+  Map<String, String> _parseUnitFilesList(String out, {bool all: false}) {
     var lines = out.split("\n")..removeAt(0);
     lines = lines
         .takeWhile((it) => !it.contains(
@@ -334,6 +326,10 @@ class SystemCTL {
       parts.removeWhere((it) => it.trim().isEmpty || it.trim() == " ");
       var name = parts[0];
       var status = parts[2];
+
+      if (!all && !name.endsWith(".service") || name.contains("@") || name.startsWith("systemd-")) {
+        continue;
+      }
 
       map[name] = status;
     }
