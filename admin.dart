@@ -135,7 +135,7 @@ addModeCommands() {
       if (event.args.length != 1) {
         event.reply("> Usage: ${cmd} <user>");
       } else {
-        bot.mode(event.network, MODE_COMMANDS[event.command], channel: event.channel, user: event.args[0]);
+        bot.setMode(event.network, MODE_COMMANDS[event.command], channel: event.channel, user: event.args[0]);
       }
     }, permission: cmd, description: "${cmd[0].toUpperCase() + cmd.substring(1)} a User");
   }

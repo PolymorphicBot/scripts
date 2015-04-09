@@ -18,19 +18,21 @@ addToDo(CommandEvent event, input) async {
 
 @Command("todos", description: "List TODO Items", prefix: "TODO")
 listToDos(CommandEvent event) {
-  event >> () async {
-      var l = todos.getList("${event.network}:${event.username}", defaultValue: []);
+  if (event.hasArguments) {
+    return "Usage: todos";
+  }
 
-      if (l.isEmpty) {
-        event < "No TODOs.";
-      } else {
-        int i = 0;
-        for (var t in l) {
-          i++;
-          event < "${i}. ${t}";
-        }
-      }
-  };
+  var l = todos.getList("${event.network}:${event.username}", defaultValue: []);
+
+  if (l.isEmpty) {
+    event < "No TODOs.";
+  } else {
+    int i = 0;
+    for (var t in l) {
+      i++;
+      event < "${i}. ${t}";
+    }
+  }
 }
 
 @Command("remove-todo", description: "Remove a TODO Item", prefix: "TODO")

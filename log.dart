@@ -20,21 +20,21 @@ stopLog(CommandEvent event) {
     event.reply("> Usage: stop-log [channel]");
     return;
   }
-  
+
   var channel = "${event.network}:${event.args.length == 0 ? event.channel : event.args[0]}";
-  
+
   if (storage.isInList("nolog", channel)) {
     event.reply("> ERROR: Logging is not enabled for ${event.args.length == 0 ? event.channel : event.args[0]}.");
     return;
   }
-  
+
   storage.addToList("nolog", channel);
-  
+
   var f = new File("logs/${event.network}/${(event.args.length == 0 ? event.channel : event.args[0]).substring(1)}.txt");
   if (f.existsSync()) {
     f.deleteSync();
   }
-  
+
   event.reply("> Logging in ${event.args.length == 0 ? event.channel : event.args[0]} has been disabled.");
 }
 
@@ -44,14 +44,14 @@ logChannel(CommandEvent event) {
     event.reply("> Usage: log-channel [channel]");
     return;
   }
-  
+
   var channel = "${event.network}:${event.args.length == 0 ? event.channel : event.args[0]}";
-  
+
   if (!storage.isInList("nolog", channel)) {
     event.reply("> ERROR: Logging is already enabled for ${event.args.length == 0 ? event.channel : event.args[0]}.");
     return;
   }
-  
+
   storage.removeFromList("nolog", channel);
   event.reply("> Logging in ${event.args.length == 0 ? event.channel : event.args[0]} has been enabled.");
 }
@@ -70,29 +70,29 @@ void startTimer() {
 
 void flushLogs() {
   var map = <String, List<LogEntry>>{};
-  
+
   while (_queue.isNotEmpty) {
     var entry = _queue.removeFirst();
     var simpleName = "${entry.network}/${entry.channel.substring(1)}";
-    
+
     if (map.containsKey(simpleName)) {
       map[simpleName].add(entry);
     } else {
       map[simpleName] = <LogEntry>[entry];
     }
   }
-  
+
   for (var name in map.keys) {
     var file = new File("logs/${name}.txt");
-    
+
     if (!file.existsSync()) {
       file.createSync(recursive: true);
     }
-    
+
     var content = map[name].map((entry) {
       return entry.format();
     }).join("\n") + "\n";
-    
+
     file.writeAsStringSync(content, mode: FileMode.APPEND);
   }
 }
@@ -104,22 +104,22 @@ const List<String> FALSE_VALUES = const ["false", "0", "no"];
 httpRoot(HttpRequest request) => HttpHelper.notFound(request);
 
 @DefaultEndpoint()
-httpDefault(HttpRequest request, HttpResponse response) {
+httpDefault(HttpRequest request, HttpResponse response) async {
   var qp = request.uri.queryParameters;
   var segments = request.uri.pathSegments;
+
   if (segments.length == 2 && fileExists("logs/${segments[0]}/${segments[1]}")) {
     var file = new File("logs/${segments[0]}/${segments[1]}");
-    file.readAsLines().then((lines) {
-      if (TRUE_VALUES.contains(qp["full"]) || (request.uri.query != null && request.uri.query.endsWith("full"))) {
-        var end = lines.length - 1;
-        var start = end - 100;
-        if (start < 0) start = 0;
-        response.writeln(lines.getRange(start, end).join("\n"));
-      } else {
-        response.writeln(lines.join("\n"));
-      }
-      response.close();
-    });
+    var lines = await file.readAsLines();
+    if (TRUE_VALUES.contains(qp["full"]) || (request.uri.query != null && request.uri.query.endsWith("full"))) {
+      response.writeln(lines.join("\n"));
+    } else {
+      var end = lines.length - 1;
+      var start = end - 100;
+      if (start < 0) start = 0;
+      response.writeln(lines.getRange(start, end).join("\n"));
+    }
+    response.close();
   } else {
     HttpHelper.notFound(request);
   }
@@ -131,7 +131,7 @@ void addEntry(LogEntry entry) {
   if (storage.isInList("nolog", "${entry.network}:${entry.channel}")) {
     return;
   }
-  
+
   _queue.add(entry);
 }
 
@@ -169,9 +169,9 @@ void handleNickChange(NickChangeEvent event) {
         ..addAll(it.owners));
       return all.contains(event.original) || all.contains(event.now);
     }).map((it) => it.name).toList();
-    
+
     for (var m in c) {
-      addEntry(new LogEntry(event.network, m, "${event.original} is now known as ${event.now}")); 
+      addEntry(new LogEntry(event.network, m, "${event.original} is now known as ${event.now}"));
     }
   });
 }
@@ -179,7 +179,7 @@ void handleNickChange(NickChangeEvent event) {
 @OnMessage()
 void handleMessage(MessageEvent event) {
   if (event.isPrivate) return;
-  
+
   addEntry(new LogEntry(event.network, event.target, "<${event.from}> ${DisplayHelpers.clean(event.message)}"));
 }
 
@@ -195,10 +195,10 @@ class LogEntry {
   final String channel;
   final String message;
   final DateTime timestamp;
-  
+
   LogEntry(this.network, this.channel, this.message) : timestamp = new DateTime.now();
   LogEntry.notNow(this.network, this.channel, this.message, this.timestamp);
-  
+
   String format() {
     var m = timestamp.toString();
     m = m.substring(0, m.indexOf("."));
