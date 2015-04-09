@@ -111,10 +111,10 @@ httpDefault(HttpRequest request, HttpResponse response) async {
   if (segments.length == 2 && fileExists("logs/${segments[0]}/${segments[1]}")) {
     var file = new File("logs/${segments[0]}/${segments[1]}");
     var lines = await file.readAsLines();
-    if (TRUE_VALUES.contains(qp["full"]) || (request.uri.query != null && request.uri.query.endsWith("full"))) {
+    if (TRUE_VALUES.contains(qp["full"]) || (request.uri.hasQuery && request.uri.query.endsWith("full"))) {
       response.writeln(lines.join("\n"));
     } else {
-      var end = lines.length - 1;
+      var end = lines.length;
       var start = end - 100;
       if (start < 0) start = 0;
       response.writeln(lines.getRange(start, end).join("\n"));
