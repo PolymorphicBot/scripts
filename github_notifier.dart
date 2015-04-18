@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
@@ -49,6 +51,22 @@ String getRepoOwner(Map<String, dynamic> repo) {
 
 String getOrganization() {
   return config.has("organization") ? config.getString("organization") : null;
+}
+
+@Start()
+start() {
+  timer = new Timer.periodic(new Duration(seconds: 6), (t) {
+    eventCache.clear();
+  });
+}
+
+Timer timer;
+
+@Shutdown()
+shutdown() {
+  if (timer != null) {
+    timer.cancel();
+  }
 }
 
 @Command("github-notify", prefix: "GitHub Notifier", permission: "manage")
@@ -109,6 +127,8 @@ githubNotify(CommandEvent event) {
 
   return subs[cmd](event.dropArguments(1));
 }
+
+List<String> eventCache = [];
 
 @HttpEndpoint("/hook")
 handleHook(HttpRequest request, HttpResponse response) async {
@@ -296,6 +316,10 @@ handleHook(HttpRequest request, HttpResponse response) async {
       break;
     case "watch":
       var who = json["sender"]["login"];
+      if (eventCache.contains("star:${repoName}:${who}")) {
+        break;
+      }
+      eventCache.add("star:${repoName}:${who}");
       message("${Color.OLIVE}${who}${Color.RESET} starred the repository");
       break;
     case "page_build":
