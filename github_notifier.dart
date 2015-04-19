@@ -112,6 +112,16 @@ githubNotify(CommandEvent event) {
       DisplayHelpers.paginate(config.getList("default_channels", defaultValue: []), 5, (page, items) {
         event.replyNotice("${items.map((it) => "${networkOf(it)} -> ${channelOf(it)}").join(", ")}");
       });
+    },
+    "ignore-repository": (List<String> args) {
+      var repo = args.join(" ");
+      config.addToList("ignore", repo);
+      return "Ignored.";
+    },
+    "unignore-repository": (List<String> args) {
+      var repo = args.join(" ");
+      config.removeFromList("ignore", repo);
+      return "Unignored.";
     }
   };
 
@@ -139,6 +149,15 @@ handleHook(HttpRequest request, HttpResponse response) async {
 
   if (json["repository"] != null) {
     var name = getRepoName(json["repository"]);
+
+    if (config.getList("ignore", defaultValue: []).contains(name)) {
+      response.writeln(encodeJSON({
+        "handled": false,
+        "reason": "ignored"
+      }, pretty: true));
+      response.close();
+      return;
+    }
 
     var names = config.getSubStorage("names");
 
