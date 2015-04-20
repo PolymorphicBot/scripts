@@ -8,7 +8,7 @@ Plugin plugin;
 @BotInstance()
 BotConnector bot;
 
-RegExp SEARCH_REPLACE = new RegExp(r"^s\/(.+?)\/([^\/]+)(?:\/?)([a-z]+?$|$)");
+RegExp SEARCH_REPLACE = new RegExp(r"^s\/(.+?)\/([^\/]*)(?:\/?)([a-z]+?$|$)");
 
 @OnMessage()
 handleMessage(MessageEvent event) {
