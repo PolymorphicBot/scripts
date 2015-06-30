@@ -33,7 +33,8 @@ wolfram(String input) async {
       "Decimal approximation",
       "Response",
       "Definitions",
-      "Definition"
+      "Definition",
+      "Chemical names and formulas"
     ];
 
     for (var p in plainPods) {
