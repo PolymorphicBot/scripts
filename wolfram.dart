@@ -29,10 +29,11 @@ wolfram(String input) async {
     }
 
     var plainPods = [
-      "Definition",
       "Result",
       "Decimal approximation",
-      "Response"
+      "Response",
+      "Definitions",
+      "Definition"
     ];
 
     for (var p in plainPods) {
