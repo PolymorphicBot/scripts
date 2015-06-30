@@ -25,10 +25,17 @@ wolfram(String input) async {
       pods[pod.title] = pod;
     }
 
-    if (pods.Definition != null) {
-      return pods.Definition.subpods[0].plaintext;
-    } else if (pods.Result != null) {
-      return pods.Result.subpods[0].plaintext;
+    var plainPods = [
+      "Definition",
+      "Result",
+      "Decimal approximation",
+      "Response"
+    ];
+
+    for (var p in plainPods) {
+      if (pods.containsKey(p)) {
+        return pods[p].subpods[0].plaintext;
+      }
     }
   } catch (e) {
     return "Failed to get output.";
