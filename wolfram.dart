@@ -3,6 +3,9 @@ export "package:polymorphic_bot/plugin.dart";
 
 const String APP_ID = "2982LV-6WP5YYAWLQ";
 
+@Command("w", description: "Wolfram Alpha", prefix: "Wolfram")
+w(String input) => wolfram(input);
+
 @Command("wolfram", description: "Wolfram Alpha", prefix: "Wolfram")
 wolfram(String input) async {
   var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(input)}&appid=${APP_ID}";
