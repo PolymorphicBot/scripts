@@ -6,7 +6,7 @@ const String APP_ID = "2982LV-6WP5YYAWLQ";
 @Command("w", description: "Wolfram Alpha", prefix: "Wolfram")
 w(CommandEvent event, String input) => wolfram(event, input);
 
-@Command("wp", description: "Wolfram Alpha with Custom Pods", prefix: "Wolfram")
+@Command("wap", description: "Wolfram Alpha with Custom Pods", prefix: "Wolfram")
 wp(CommandEvent event, String input) => wolfram(event, input);
 
 @Command("wolfram", description: "Wolfram Alpha", prefix: "Wolfram")
@@ -14,11 +14,11 @@ wolfram(CommandEvent event, String input) async {
   var thing = input;
   String preferPod;
 
-  if (event.command == "wp") {
+  if (event.command == "wap") {
     var regex = new RegExp(r'\"(.*)\" (.*)');
 
     if (regex.hasMatch(thing)) {
-      var match = regex.firstMatch(full);
+      var match = regex.firstMatch(thing);
       preferPod = match.group(1);
       thing = match.group(2);
     }
