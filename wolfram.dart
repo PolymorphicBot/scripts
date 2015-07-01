@@ -29,32 +29,17 @@ wolfram(String input) async {
       }
     }
 
-    var pods = new SimpleMap({});
+    var n = result.pods
+      .firstWhere((x) =>
+        x.title != "Input interpretation" && x.title != "Input", orElse: () => null);
 
-    for (var pod in result.pods) {
-      pods[pod.title] = pod;
-    }
-
-    var plainPods = [
-      "Result",
-      "Decimal approximation",
-      "Response",
-      "Definitions",
-      "Definition",
-      "Chemical names and formulas",
-      "Basic information",
-      "Power of 10 representation",
-    ];
-
-    for (var p in plainPods) {
-      if (pods.containsKey(p)) {
-        var r = pods[p].subpods[0].plaintext;
-        var split = r.split("\n");
-        if (split.length > 5) {
-          return split.take(5).join("\n");
-        } else {
-          return r;
-        }
+    if (n != null) {
+      var r = n.subpods[0].plaintext;
+      var split = r.split("\n");
+      if (split.length > 5) {
+        return split.take(5).join("\n");
+      } else {
+        return r;
       }
     }
   } catch (e) {
