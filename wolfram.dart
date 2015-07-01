@@ -34,13 +34,11 @@ wolfram(String input) async {
         x.title != "Input interpretation" && x.title != "Input", orElse: () => null);
 
     if (n != null) {
+      var msgs = [];
       var r = n.subpods[0].plaintext;
-      var split = r.split("\n");
-      if (split.length > 5) {
-        return split.take(5).join("\n");
-      } else {
-        return r;
-      }
+      msgs.add("${n.title}:");
+      msgs.addAll(r.split("\n"));
+      return msgs.take(5).join("\n");
     }
   } catch (e) {
     return "Failed to get output.";
