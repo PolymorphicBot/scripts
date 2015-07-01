@@ -11,6 +11,11 @@ wolfram(String input) async {
   var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(input)}&appid=${APP_ID}";
   var json = await fetchJSON(url);
   var result = json.queryresult;
+
+  if (result.error != null) {
+    return result.error.msg;
+  }
+
   try {
     if (result.pods == null) {
       var dym = result.didyoumeans;
@@ -34,12 +39,20 @@ wolfram(String input) async {
       "Response",
       "Definitions",
       "Definition",
-      "Chemical names and formulas"
+      "Chemical names and formulas",
+      "Basic information",
+      "Power of 10 representation",
     ];
 
     for (var p in plainPods) {
       if (pods.containsKey(p)) {
-        return pods[p].subpods[0].plaintext;
+        var r = pods[p].subpods[0].plaintext;
+        var split = r.split("\n");
+        if (split.length > 5) {
+          return split.take(5).join("\n");
+        } else {
+          return r;
+        }
       }
     }
   } catch (e) {
