@@ -9,14 +9,15 @@ w(String input) => wolfram(input);
 @Command("wolfram", description: "Wolfram Alpha", prefix: "Wolfram")
 wolfram(String input) async {
   var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(input)}&appid=${APP_ID}";
-  var json = await fetchJSON(url);
-  var result = json.queryresult;
-
-  if (result.error != null) {
-    return result.error.msg;
-  }
 
   try {
+    var json = await fetchJSON(url);
+    var result = json.queryresult;
+
+    if (result.error != null) {
+      return result.error.msg;
+    }
+
     if (result.pods == null) {
       var dym = result.didyoumeans;
       if (dym != null && dym.isNotEmpty) {
