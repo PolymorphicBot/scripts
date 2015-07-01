@@ -12,11 +12,12 @@ wolfram(String input) async {
 
   try {
     var json = await fetchJSON(url);
-    var result = json.queryresult;
 
-    if (result.error != null) {
-      return result.error.msg;
+    if (json.error != null) {
+      return json.error.msg;
     }
+
+    var result = json.queryresult;
 
     if (result.pods == null) {
       var dym = result.didyoumeans;
