@@ -1,3 +1,5 @@
+import "dart:async";
+
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
@@ -28,10 +30,8 @@ wolfram(CommandEvent event, String input) async {
     }
   }
 
-  var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(thing)}&appid=${APP_ID}";
-
   try {
-    var json = await fetchJSON(url);
+    var json = await fetchWolframData(thing);
 
     if (json.error != null) {
       return json.error.msg;
@@ -81,4 +81,8 @@ wolfram(CommandEvent event, String input) async {
   }
 
   return "Pod not found.";
+}
+
+Future<Map<String, dynamic>> fetchWolframData(String query) async {
+  return await fetchJSON("http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(query)}&appid=${APP_ID}");
 }
