@@ -145,7 +145,13 @@ listgchannelcmds(CommandEvent event) {
 
 @OnCommand()
 handleTextCommand(CommandEvent event) {
-  String value = storage.getString("${event.command}");
+  String value;
+
+  try {
+    value = storage.getString("${event.command}");
+  } catch (e) {
+    return;
+  }
 
   if (value != null) {
     event.reply("> ${value}", prefix: false);
