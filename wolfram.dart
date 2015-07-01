@@ -4,11 +4,26 @@ export "package:polymorphic_bot/plugin.dart";
 const String APP_ID = "2982LV-6WP5YYAWLQ";
 
 @Command("w", description: "Wolfram Alpha", prefix: "Wolfram")
-w(String input) => wolfram(input);
+w(CommandEvent event, String input) => wolfram(event, input);
+
+@Command("wp", description: "Wolfram Alpha with Custom Pods", prefix: "Wolfram")
+wp(CommandEvent event, String input) => wolfram(event, input);
 
 @Command("wolfram", description: "Wolfram Alpha", prefix: "Wolfram")
-wolfram(String input) async {
-  var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(input)}&appid=${APP_ID}";
+wolfram(CommandEvent event, String input) async {
+  var thing = input;
+  String preferPod;
+
+  if (event.command == "wp") {
+    var regex = new RegExp(r'\"(.*)\" (.*)');
+
+    if (regex.hasMatch(thing)) {
+      var match = regex.firstMatch(full);
+      preferPod = match.group(1);
+      thing = match.group(2);
+    }
+  }
+  var url = "http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(thing)}&appid=${APP_ID}";
 
   try {
     var json = await fetchJSON(url);
@@ -30,8 +45,16 @@ wolfram(String input) async {
     }
 
     var n = result.pods
-      .firstWhere((x) =>
-        x.title != "Input interpretation" && x.title != "Input", orElse: () => null);
+      .firstWhere((x) {
+      if (preferPod != null) {
+        return x.title == preferPod;
+      }
+
+      if (x.title != "Input interpretation" && x.title != "Input") {
+        return true;
+      }
+      return false;
+    }, orElse: () => null);
 
     if (n != null) {
       var msgs = [];
@@ -44,5 +67,5 @@ wolfram(String input) async {
     return "Failed to get output.";
   }
 
-  return "Pod is not yet supported.";
+  return "Pod not found.";
 }
