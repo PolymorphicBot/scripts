@@ -63,7 +63,7 @@ wolfram(CommandEvent event, String input) async {
         return x.title == preferPod;
       }
 
-      if (x.title != "Input interpretation" && x.title != "Input") {
+      if (x.title != "Input interpretation" && x.title != "Input" && x.subpods[0].plaintext.trim().isNotEmpty) {
         return true;
       }
       return false;
