@@ -83,6 +83,6 @@ wolfram(CommandEvent event, String input) async {
   return "Pod not found.";
 }
 
-Future<Map<String, dynamic>> fetchWolframData(String query) async {
-  return await fetchJSON("http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(query)}&appid=${APP_ID}");
+Future<SimpleMap> fetchWolframData(String query) async {
+  return new SimpleMap(await fetchJSON("http://api.wolframalpha.com/v2/query?output=json&input=${Uri.encodeComponent(query)}&appid=${APP_ID}"));
 }
