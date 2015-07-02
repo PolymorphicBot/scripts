@@ -173,7 +173,7 @@ void handleNickChange(NickChangeEvent event) {
     for (var m in c) {
       addEntry(new LogEntry(event.network, m, "${event.original} is now known as ${event.now}"));
     }
-  });
+  }).catchError((e) {});
 }
 
 @OnMessage()
