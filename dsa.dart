@@ -134,8 +134,8 @@ getDsaValues(String input) async {
       val = rval.toStringAsFixed(2);
     }
 
-    if (node.attributes.containsKey("@unit")) {
-      var unit = node.attributes["@unit"];
+    if (child.attributes.containsKey("@unit")) {
+      var unit = child.attributes["@unit"];
       if (unit == "%") {
         val += "%";
       } else {
