@@ -29,6 +29,50 @@ start() async {
   link.connect();
 }
 
+@Command("dsa-ls", description: "Get a Simple List of DSA Nodes", usage: "<path>", prefix: "DSA")
+getSimpleList(String input) async {
+  var node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  if (node == null) {
+    return "ERROR: Node not Found.";
+  }
+
+  var names = node.children.keys.join(", ");
+
+  if (names.isEmpty) {
+    return "No Children.";
+  } else {
+    return names;
+  }
+}
+
+@Command("dsa-node", description: "Get a Simple Description of a DSA Node", usage: "<path>", prefix: "DSA")
+getNodeInfo(String input) async {
+  var node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  if (node == null) {
+    return "ERROR: Node not Found.";
+  }
+
+  var childrenCount = node.children.keys.length;
+  var path = new Path(node.remotePath);
+  var name = node.configs.containsKey(r"$name") ? node.configs[r"$name"] : path.name;
+
+  var out = [
+    "Name: ${name}"
+  ];
+
+  if (node.configs[r"$type"] != null) {
+    out.add("Value Type: ${node.configs[r"$type"]}");
+  }
+
+  if (childrenCount > 0) {
+    out.add("${childrenCount} ${childrenCount == 1 ? 'child' : 'children'}");
+  }
+
+  return out.join(", ");
+}
+
 @Command("dsa-value", description: "Get DSA Value", usage: "<path>", prefix: "DSA")
 getDsaValue(String input) async {
   RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
