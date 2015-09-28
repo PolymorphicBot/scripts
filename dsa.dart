@@ -140,7 +140,7 @@ getDsaValues(String input) async {
     out.add(val);
   }
 
-  return out;
+  return out.join("\n");
 }
 
 @Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
