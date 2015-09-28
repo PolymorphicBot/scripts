@@ -122,7 +122,7 @@ getDsaValues(String input) async {
     var update = await link.requester.getNodeValue(child.remotePath);
     var rval = update.value;
 
-    String val = "${name}: " + rval.toString();
+    String val = rval.toString();
 
     if (rval is double) {
       val = rval.toStringAsFixed(2);
@@ -137,7 +137,7 @@ getDsaValues(String input) async {
       }
     }
 
-    out.add(val);
+    out.add("${name}: ${val}");
   }
 
   return out.join("\n");
