@@ -29,10 +29,27 @@ start() async {
   link.connect();
 }
 
-@Command("dsa-value", description: "Get DSA Values", usage: "<path>")
+@Command("dsa-value", description: "Get DSA Values", usage: "<path>", prefix: "DSA")
 getDsaValue(String input) async {
+  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  if (node == null) {
+    return "ERROR: Node not Found.";
+  }
+
   var update = await link.requester.getNodeValue(input);
-  return update.value.toString();
+  var val = update.value.toString();
+
+  if (node.attributes.containsKey("@unit")) {
+    var unit = node.attributes["@unit"];
+    if (unit == "%") {
+      val += "%";
+    } else {
+      val += " ${unit}";
+    }
+  }
+
+  return val;
 }
 
 @Shutdown()
