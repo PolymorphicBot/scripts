@@ -29,8 +29,37 @@ start() async {
   link.connect();
 }
 
-@Command("dsa-value", description: "Get DSA Values", usage: "<path>", prefix: "DSA")
+@Command("dsa-value", description: "Get DSA Value", usage: "<path>", prefix: "DSA")
 getDsaValue(String input) async {
+  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  if (node == null) {
+    return "ERROR: Node not Found.";
+  }
+
+  var update = await link.requester.getNodeValue(input);
+  var rval = update.value;
+
+  String val = rval.toString();
+
+  if (rval is double) {
+    val = rval.toStringAsFixed(2);
+  }
+
+  if (node.attributes.containsKey("@unit")) {
+    var unit = node.attributes["@unit"];
+    if (unit == "%") {
+      val += "%";
+    } else {
+      val += " ${unit}";
+    }
+  }
+
+  return val;
+}
+
+@Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
+getRealDsaValue(String input) async {
   RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
