@@ -5,3 +5,5 @@ dependencies:
   math_expressions: ">=0.1.0 <0.2.0"
   github:
     git: git://github.com/DirectMyFile/github.dart.git
+  dslink:
+    git: https://github.com/IOT-DSA/sdk-dslink-dart.git
