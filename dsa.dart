@@ -117,6 +117,12 @@ getDsaValues(String input) async {
       continue;
     }
 
+    child = await link.requester.getRemoteNode(child.remotePath).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+    if (child == null) {
+      continue;
+    }
+
     var path = new Path(child.remotePath);
     var name = child.configs.containsKey(r"$name") ? child.configs[r"$name"] : path.name;
     var update = await link.requester.getNodeValue(child.remotePath);
