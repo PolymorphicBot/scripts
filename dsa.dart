@@ -102,6 +102,47 @@ getDsaValue(String input) async {
   return val;
 }
 
+@Command("dsa-values", description: "Get multiple DSA Values", usage: "<path>", prefix: "DSA")
+getDsaValues(String input) async {
+  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  if (node == null) {
+    return "ERROR: Node not Found.";
+  }
+
+  var out = [];
+
+  for (RemoteNode child in node.children.values) {
+    if (!child.configs.containsKey(r"$type")) {
+      continue;
+    }
+
+    var path = new Path(child.remotePath);
+    var name = child.configs.containsKey(r"$name") ? child.configs[r"$name"] : path.name;
+    var update = await link.requester.getNodeValue(child.remotePath);
+    var rval = update.value;
+
+    String val = "${name}: " + rval.toString();
+
+    if (rval is double) {
+      val = rval.toStringAsFixed(2);
+    }
+
+    if (node.attributes.containsKey("@unit")) {
+      var unit = node.attributes["@unit"];
+      if (unit == "%") {
+        val += "%";
+      } else {
+        val += " ${unit}";
+      }
+    }
+
+    out.add(val);
+  }
+
+  return out;
+}
+
 @Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
 getRealDsaValue(String input) async {
   RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
