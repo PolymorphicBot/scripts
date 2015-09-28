@@ -30,8 +30,8 @@ start() async {
 }
 
 @Command("dsa-value", description: "Get DSA Values", usage: "<path>")
-getDsaValue(String path) async {
-  var update = await link.requester.getNodeValue(path);
+getDsaValue(String input) async {
+  var update = await link.requester.getNodeValue(input);
   return update.value.toString();
 }
 
