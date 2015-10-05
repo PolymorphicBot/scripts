@@ -3,6 +3,34 @@ export "package:polymorphic_bot/plugin.dart";
 
 import "package:dslink/dslink.dart";
 
+@BotInstance()
+BotConnector bot;
+
+final RegExp VALUE_REGEX = new RegExp(r'(\"(.+)\"|[^ ]+) (\"(.+)\"|.+)');
+
+class PathValuePair {
+  final String path;
+  final dynamic value;
+
+  PathValuePair(this.path, this.value);
+}
+
+PathValuePair parsePathValuePair(String input, [bool flipped = false]) {
+  if (!VALUE_REGEX.hasMatch(input)) {
+    return null;
+  }
+
+  var match = VALUE_REGEX.firstMatch(input);
+
+  var a = match[2] == null ? match[1] : match[2];
+  var b = match[3];
+
+  var path = flipped ? b : a;
+  var value = flipped ? a : b;
+
+  return new PathValuePair(path, value);
+}
+
 @PluginStorage("config")
 Storage config;
 
@@ -27,6 +55,100 @@ start() async {
     loadNodesJson: false
   );
   link.connect();
+
+  await link.onRequesterReady;
+
+  StorageContainer meta = bot.plugin.getStorage("metadata");
+  for (var key in meta.keys) {
+    StorageContainer metas = meta.getSubStorage(key);
+    List<String> parts = key.split(":");
+    String network = parts[0];
+    String user = parts.skip(1).join(":");
+    if (user.startsWith("#")) {
+      continue;
+    }
+
+    for (var m in metas.keys) {
+      if (!m.startsWith("subscriptions::")) {
+        continue;
+      }
+
+      var nick = m.split("::").skip(1).join("::");
+      await doSubscribeToValue(network, user, nick, metas.getString(m));
+    }
+  }
+}
+
+Map<String, ReqSubscribeListener> subscribeListeners = {};
+
+doSubscribeToValue(String network, String user, String name, String path) async {
+  RemoteNode node = await link.requester
+    .getRemoteNode(path)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
+
+  var isFirst = true;
+
+  print("[DSA] ${user} on ${network} subscribes to ${path} as ${name}");
+
+  subscribeListeners["${network}:${user}:${name}:${path}"] = link.requester.subscribe(path, (ValueUpdate update) async {
+    if (isFirst) {
+      isFirst = false;
+      return;
+    }
+
+    var val = update.value.toString();
+
+    if (update.value is double) {
+      val = (update.value as double).toStringAsFixed(2);
+    }
+
+    if (node.attributes.containsKey("@unit")) {
+      var unit = node.attributes["@unit"];
+      if (unit == "%") {
+        val += "%";
+      } else {
+        val += " ${unit}";
+      }
+    }
+
+    bot.sendNotice(network, user, "[${Color.BLUE}${name}${Color.RESET}] ${val}");
+  });
+}
+
+@Command("dsa-subscribe", description: "Subscribe to DSA Values", usage: "<nickname> <path>", prefix: "DSA")
+subscribeToValue(CommandEvent event, String input) async {
+  var pair = parsePathValuePair(input, true);
+
+  if (pair == null) {
+    return "ERROR: Bad Command Input.";
+  }
+
+  var settings = event.getUserMetadata();
+  var key = "subscriptions::${pair.value}";
+  if (settings.has(key)) {
+    return "ERROR: Subscription called '${pair.value}' already exists.";
+  }
+  settings.setString(key, pair.path);
+  await doSubscribeToValue(event.network, event.user, pair.value, pair.path);
+  return "Subscribed.";
+}
+
+@Command("dsa-unsubscribe", description: "Unsubscribe from DSA Values", usage: "<nickname>", prefix: "DSA")
+unsubscribeFromValue(CommandEvent event, String input) async {
+  var settings = event.getUserMetadata();
+  var key = "subscriptions::${input}";
+  if (!settings.has(key)) {
+    return "ERROR: No Such Subscription '${key}'";
+  }
+  var rkey = "${event.network}:${event.user}:${input}:${settings.getString(key)}";
+  if (subscribeListeners.containsKey(rkey)) {
+    subscribeListeners[rkey].cancel();
+    subscribeListeners.remove(rkey);
+  }
+
+  settings.remove(key);
+
+  return "Unsubscribed";
 }
 
 @Command("dsa-ls", description: "Get a Simple List of DSA Nodes", usage: "<path>", prefix: "DSA")
