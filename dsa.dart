@@ -31,13 +31,17 @@ start() async {
 
 @Command("dsa-ls", description: "Get a Simple List of DSA Nodes", usage: "<path>", prefix: "DSA")
 getSimpleList(String input) async {
-  var node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+  var node = await link.requester
+    .getRemoteNode(input)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
     return "ERROR: Node not Found.";
   }
 
-  var names = node.children.keys.join(", ");
+  var names = node.children.keys.where((k) {
+    return node.children[k].configs[r"$disconnectedTs"] == null;
+  }).join(", ");
 
   if (names.isEmpty) {
     return "No Children.";
@@ -48,13 +52,21 @@ getSimpleList(String input) async {
 
 @Command("dsa-node", description: "Get a Simple Description of a DSA Node", usage: "<path>", prefix: "DSA")
 getNodeInfo(String input) async {
-  var node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+  RemoteNode node = await link.requester
+    .getRemoteNode(input)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
     return "ERROR: Node not Found.";
   }
 
-  var childrenCount = node.children.keys.length;
+  if (node.configs.containsKey(r"$disconnectedTs")) {
+    return "ERROR: Node is disconnected.";
+  }
+
+  var childrenCount = node.children.keys.where((k) {
+    return node.children[k].configs[r"$disconnectedTs"] == null;
+  }).length;
   var path = new Path(node.remotePath);
   var name = node.configs.containsKey(r"$name") ? node.configs[r"$name"] : path.name;
 
@@ -75,7 +87,9 @@ getNodeInfo(String input) async {
 
 @Command("dsa-value", description: "Get DSA Value", usage: "<path>", prefix: "DSA")
 getDsaValue(String input) async {
-  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+  RemoteNode node = await link.requester
+    .getRemoteNode(input)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
     return "ERROR: Node not Found.";
@@ -104,7 +118,9 @@ getDsaValue(String input) async {
 
 @Command("dsa-values", description: "Get multiple DSA Values", usage: "<path>", prefix: "DSA")
 getDsaValues(String input) async {
-  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+  RemoteNode node = await link.requester
+    .getRemoteNode(input)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
     return "ERROR: Node not Found.";
@@ -151,7 +167,9 @@ getDsaValues(String input) async {
 
 @Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
 getRealDsaValue(String input) async {
-  RemoteNode node = await link.requester.getRemoteNode(input).timeout(const Duration(seconds: 3), onTimeout: () => null);
+  RemoteNode node = await link.requester
+    .getRemoteNode(input)
+    .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
   if (node == null) {
     return "ERROR: Node not Found.";
