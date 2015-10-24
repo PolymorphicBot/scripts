@@ -156,7 +156,7 @@ subscribeToValue(CommandEvent event, String input) async {
   return "Subscribed.";
 }
 
-@Command("dsa-alias", description: "Alias DSA Path", usage: "<name> <path>")
+@Command("dsa-alias", description: "Alias DSA Path", usage: "<name> <path>", prefix: "DSA Aliases")
 aliasPath(CommandEvent event, String input) {
   var pair = parsePathValuePair(event, input, true);
 
@@ -172,7 +172,7 @@ aliasPath(CommandEvent event, String input) {
   return "Alias Set.";
 }
 
-@Command("dsa-unalias", description: "Remove an alias to a DSA Path", usage: "<name>")
+@Command("dsa-unalias", description: "Remove an alias to a DSA Path", usage: "<name>", prefix: "DSA Aliases")
 unaliasPath(CommandEvent event, String input) {
   var data = event.getChannelMetadata();
   if (!data.has("alias::${input}")) {
