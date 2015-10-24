@@ -15,7 +15,7 @@ class PathValuePair {
   PathValuePair(this.path, this.value);
 }
 
-PathValuePair parsePathValuePair(String input, [bool flipped = false]) {
+PathValuePair parsePathValuePair(CommandEvent event, String input, [bool flipped = false]) {
   if (!VALUE_REGEX.hasMatch(input)) {
     return null;
   }
@@ -27,6 +27,8 @@ PathValuePair parsePathValuePair(String input, [bool flipped = false]) {
 
   var path = flipped ? b : a;
   var value = flipped ? a : b;
+
+  path = getAliasOrPath(event, path);
 
   return new PathValuePair(path, value);
 }
@@ -80,12 +82,23 @@ start() async {
 }
 
 @Command("dsa-html", description: "Generate an HTML Url to a DSA node", usage: "<path>", prefix: "DSA")
-getHtmlUrl(String input) {
+getHtmlUrl(CommandEvent event, String input) {
+  input = getAliasOrPath(event, input);
+
   if (config.has("html_url_template")) {
     var template = config.getString("html_url_template");
     return template.replaceAll("{path}", Uri.encodeFull(input));
   } else {
     return "Unsupported.";
+  }
+}
+
+String getAliasOrPath(CommandEvent event, String path) {
+  var meta = event.getChannelMetadata();
+  if (meta.has("alias::${path}")) {
+    return meta.getString("alias::${path}");
+  } else {
+    return path;
   }
 }
 
@@ -127,7 +140,7 @@ doSubscribeToValue(String network, String user, String name, String path) async 
 
 @Command("dsa-subscribe", description: "Subscribe to DSA Values", usage: "<nickname> <path>", prefix: "DSA")
 subscribeToValue(CommandEvent event, String input) async {
-  var pair = parsePathValuePair(input, true);
+  var pair = parsePathValuePair(event, input, true);
 
   if (pair == null) {
     return "ERROR: Bad Command Input.";
@@ -141,6 +154,54 @@ subscribeToValue(CommandEvent event, String input) async {
   settings.setString(key, pair.path);
   await doSubscribeToValue(event.network, event.user, pair.value, pair.path);
   return "Subscribed.";
+}
+
+@Command("dsa-alias", description: "Alias DSA Path", usage: "<name> <path>")
+aliasPath(CommandEvent event, String input) {
+  var pair = parsePathValuePair(event, input, true);
+
+  if (pair == null) {
+    return "ERROR: Bad Command Input.";
+  }
+
+  var data = event.getChannelMetadata();
+  if (data.has("alias::${pair.value}")) {
+    return "Alias named '${pair.value}' already exists.";
+  }
+  data.setString("alias::${pair.value}", pair.path);
+  return "Alias Set.";
+}
+
+@Command("dsa-unalias", description: "Remove an alias to a DSA Path", usage: "<name>")
+unaliasPath(CommandEvent event, String input) {
+  var data = event.getChannelMetadata();
+  if (!data.has("alias::${input}")) {
+    return "Alias '${input}' does not exist.";
+  }
+  data.remove(input);
+  return "Alias Removed.";
+}
+
+@Command("dsa-aliases", description: "List DSA Aliases", prefix: "DSA Aliases")
+listAliases(CommandEvent event) {
+  var data = event.getChannelMetadata();
+  var out = [];
+  for (var key in data.keys) {
+    if (!key.startsWith("alias::")) {
+      continue;
+    }
+
+    var name = key.split("${key}::").last;
+    out.add(name);
+  }
+
+  if (out.isNotEmpty) {
+    DisplayHelpers.paginate(out, 5, (page, items) {
+      event.reply(items.join(", "));
+    });
+  } else {
+    return "No Aliases Found.";
+  }
 }
 
 @Command("dsa-unsubscribe", description: "Unsubscribe from DSA Values", usage: "<nickname>", prefix: "DSA")
@@ -162,7 +223,9 @@ unsubscribeFromValue(CommandEvent event, String input) async {
 }
 
 @Command("dsa-ls", description: "Get a Simple List of DSA Nodes", usage: "<path>", prefix: "DSA")
-getSimpleList(String input) async {
+getSimpleList(CommandEvent event, String input) async {
+  input = getAliasOrPath(event, input);
+
   var node = await link.requester
     .getRemoteNode(input)
     .timeout(const Duration(seconds: 3), onTimeout: () => null);
@@ -183,7 +246,8 @@ getSimpleList(String input) async {
 }
 
 @Command("dsa-node", description: "Get a Simple Description of a DSA Node", usage: "<path>", prefix: "DSA")
-getNodeInfo(String input) async {
+getNodeInfo(CommandEvent event, String input) async {
+  input = getAliasOrPath(event, input);
   RemoteNode node = await link.requester
     .getRemoteNode(input)
     .timeout(const Duration(seconds: 3), onTimeout: () => null);
@@ -218,7 +282,9 @@ getNodeInfo(String input) async {
 }
 
 @Command("dsa-value", description: "Get DSA Value", usage: "<path>", prefix: "DSA")
-getDsaValue(String input) async {
+getDsaValue(CommandEvent event, String input) async {
+  input = getAliasOrPath(event, input);
+
   RemoteNode node = await link.requester
     .getRemoteNode(input)
     .timeout(const Duration(seconds: 3), onTimeout: () => null);
@@ -249,7 +315,9 @@ getDsaValue(String input) async {
 }
 
 @Command("dsa-values", description: "Get multiple DSA Values", usage: "<path>", prefix: "DSA")
-getDsaValues(String input) async {
+getDsaValues(CommandEvent event, String input) async {
+  input = getAliasOrPath(event, input);
+
   RemoteNode node = await link.requester
     .getRemoteNode(input)
     .timeout(const Duration(seconds: 3), onTimeout: () => null);
@@ -299,7 +367,9 @@ getDsaValues(String input) async {
 }
 
 @Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
-getRealDsaValue(String input) async {
+getRealDsaValue(CommandEvent event, String input) async {
+  input = getAliasOrPath(event, input);
+
   RemoteNode node = await link.requester
     .getRemoteNode(input)
     .timeout(const Duration(seconds: 3), onTimeout: () => null);
