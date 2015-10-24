@@ -80,10 +80,10 @@ start() async {
 }
 
 @Command("dsa-html", description: "Generate an HTML Url to a DSA node", usage: "<path>", prefix: "DSA")
-getHtmlUrl(String path) {
+getHtmlUrl(String input) {
   if (config.has("html_url_template")) {
     var template = config.getString("html_url_template");
-    return template.replaceAll("{path}", Uri.encodeComponent(path));
+    return template.replaceAll("{path}", Uri.encodeComponent(input));
   } else {
     return "Unsupported.";
   }
