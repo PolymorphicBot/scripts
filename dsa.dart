@@ -178,7 +178,7 @@ unaliasPath(CommandEvent event, String input) {
   if (!data.has("alias::${input}")) {
     return "Alias '${input}' does not exist.";
   }
-  data.remove(input);
+  data.remove("alias::${input}");
   return "Alias Removed.";
 }
 
