@@ -83,7 +83,7 @@ start() async {
 getHtmlUrl(String input) {
   if (config.has("html_url_template")) {
     var template = config.getString("html_url_template");
-    return template.replaceAll("{path}", Uri.encodeComponent(input));
+    return template.replaceAll("{path}", Uri.encodeFull(input));
   } else {
     return "Unsupported.";
   }
