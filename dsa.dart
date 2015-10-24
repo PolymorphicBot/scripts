@@ -79,6 +79,16 @@ start() async {
   }
 }
 
+@Command("dsa-html", description: "Generate an HTML Url to a DSA node", usage: "<path>", prefix: "DSA")
+getHtmlUrl(String path) {
+  if (config.has("html_url_template")) {
+    var template = config.getString("html_url_template");
+    return template.replaceAll("{path}", Uri.encodeComponent(path));
+  } else {
+    return "Unsupported.";
+  }
+}
+
 Map<String, ReqSubscribeListener> subscribeListeners = {};
 
 doSubscribeToValue(String network, String user, String name, String path) async {
@@ -255,7 +265,8 @@ getDsaValues(String input) async {
       continue;
     }
 
-    child = await link.requester.getRemoteNode(child.remotePath).timeout(const Duration(seconds: 3), onTimeout: () => null);
+    child = await link.requester.getRemoteNode(child.remotePath)
+        .timeout(const Duration(seconds: 3), onTimeout: () => null);
 
     if (child == null) {
       continue;
