@@ -191,7 +191,7 @@ listAliases(CommandEvent event) {
       continue;
     }
 
-    var name = key.split("${key}::").last;
+    var name = key.split("alias::").last;
     out.add(name);
   }
 
