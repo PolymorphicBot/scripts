@@ -299,7 +299,11 @@ invokeAction(CommandEvent event, String input) async {
       }
     }
 
-    for (var row in update.rows) {
+    for (var e in update.updates) {
+      var row = e is Map ? e.values.toList() : e;
+      if (row is! List) {
+        row = [row];
+      }
       event.reply(row.join(", "));
       didSendAny = true;
     }
