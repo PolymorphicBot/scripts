@@ -291,11 +291,12 @@ invokeAction(CommandEvent event, String input) async {
             buff.write(x.name);
           }
         }
+        
         if (buff.isNotEmpty) {
           event.reply("Columns: " + buff.toString());
           didSendAny = true;
+          didSendColumns = true;
         }
-        didSendColumns = true;
       }
     }
 
