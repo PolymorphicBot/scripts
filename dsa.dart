@@ -270,34 +270,45 @@ invokeAction(CommandEvent event, String input) async {
 
   bool didSendColumns = false;
 
+  var didSendAny = false;
+
   StreamSubscription sub;
   sub = link.requester.invoke(path, param).listen((RequesterInvokeUpdate update) {
     if (update.error != null) {
       event.reply("Error: ${update.error.getMessage()}");
       sub.cancel();
+      didSendAny = true;
       return;
     }
 
     if (!didSendColumns) {
-      var buff = new StringBuffer();
-      for (var x in update.columns) {
-        if (buff.isNotEmpty) {
-          buff.write(", ${x.name}");
-        } else {
-          buff.write(x.name);
+      if (update.columns != null) {
+        var buff = new StringBuffer();
+        for (var x in update.columns) {
+          if (buff.isNotEmpty) {
+            buff.write(", ${x.name}");
+          } else {
+            buff.write(x.name);
+          }
         }
+        if (buff.isNotEmpty) {
+          event.reply("Columns: " + buff.toString());
+          didSendAny = true;
+        }
+        didSendColumns = true;
       }
-      if (buff.isNotEmpty) {
-        event.reply("Columns: " + buff.toString());
-      }
-      didSendColumns = true;
     }
 
     for (var row in update.rows) {
       event.reply(row.join(", "));
+      didSendAny = true;
     }
   }, onDone: () {
     _invokes.remove(sub);
+
+    if (!didSendAny) {
+      event.reply("Invoked.");
+    }
   }, onError: () {
     _invokes.remove(sub);
   });
