@@ -1,3 +1,6 @@
+import "dart:async";
+import "dart:convert";
+
 import "package:polymorphic_bot/plugin.dart";
 export "package:polymorphic_bot/plugin.dart";
 
@@ -245,6 +248,63 @@ getSimpleList(CommandEvent event, String input) async {
   }
 }
 
+@Command("dsa-invoke", description: "Invoke a DSA Action", usage: "<path> <params>", prefix: "DSA")
+invokeAction(CommandEvent event, String input) async {
+  var pair = parsePathValuePair(event, input);
+
+  if (pair == null) {
+    return "Bad Command Input. Expected a path and parameters.";
+  }
+
+  var path = pair.path;
+  var params = pair.value;
+
+  Map param;
+
+  try {
+    param = JSON.decode(params);
+  } catch (e) {
+    param = {};
+    path = input;
+  }
+
+  bool didSendColumns = false;
+
+  StreamSubscription sub;
+  sub = link.requester.invoke(path, param).listen((RequesterInvokeUpdate update) {
+    if (update.error != null) {
+      event.reply("Error: ${update.error.getMessage()}");
+      sub.cancel();
+      return;
+    }
+
+    if (!didSendColumns) {
+      var buff = new StringBuffer();
+      for (var x in update.columns) {
+        if (buff.isNotEmpty) {
+          buff.write(", ${x.name}");
+        } else {
+          buff.write(x.name);
+        }
+      }
+      if (buff.isNotEmpty) {
+        event.reply("Columns: " + buff.toString());
+      }
+      didSendColumns = true;
+    }
+
+    for (var row in update.rows) {
+      event.reply(row.join(", "));
+    }
+  }, onDone: () {
+    _invokes.remove(sub);
+  }, onError: () {
+    _invokes.remove(sub);
+  });
+
+  _invokes.add(sub);
+}
+
 @Command("dsa-node", description: "Get a Simple Description of a DSA Node", usage: "<path>", prefix: "DSA")
 getNodeInfo(CommandEvent event, String input) async {
   input = getAliasOrPath(event, input);
@@ -366,6 +426,14 @@ getDsaValues(CommandEvent event, String input) async {
   return out.join("\n");
 }
 
+@Command("dsa-invoke-stop", description: "Stop DSA Invokes", prefix: "DSA")
+stopInvokes() {
+  while (_invokes.isNotEmpty) {
+    _invokes.removeAt(0).cancel();
+  }
+  return "Stopped Invokes.";
+}
+
 @Command("dsa-rvalue", description: "Get Real DSA Value", usage: "<path>", prefix: "DSA")
 getRealDsaValue(CommandEvent event, String input) async {
   input = getAliasOrPath(event, input);
@@ -397,3 +465,5 @@ getRealDsaValue(CommandEvent event, String input) async {
 shutdown() async {
   link.close();
 }
+
+List<StreamSubscription> _invokes = [];
