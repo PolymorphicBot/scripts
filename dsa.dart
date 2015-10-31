@@ -272,6 +272,14 @@ invokeAction(CommandEvent event, String input) async {
 
   var didSendAny = false;
 
+  var node = await link.requester.getRemoteNode(path).timeout(const Duration(seconds: 5), onTimeout: () => null);
+
+  if (node == null) {
+    return "No Such Action.";
+  }
+
+  List columns;
+
   StreamSubscription sub;
   sub = link.requester.invoke(path, param).listen((RequesterInvokeUpdate update) {
     if (update.error != null) {
@@ -282,7 +290,11 @@ invokeAction(CommandEvent event, String input) async {
     }
 
     if (!didSendColumns) {
-      if (update.columns != null) {
+      if (columns == null && update.columns != null) {
+        columns = update.columns;
+      }
+
+      if (columns != null) {
         var buff = new StringBuffer();
         for (var x in update.columns) {
           if (buff.isNotEmpty) {
