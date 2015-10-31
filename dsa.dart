@@ -291,7 +291,7 @@ invokeAction(CommandEvent event, String input) async {
             buff.write(x.name);
           }
         }
-        
+
         if (buff.isNotEmpty) {
           event.reply("Columns: " + buff.toString());
           didSendAny = true;
@@ -300,13 +300,15 @@ invokeAction(CommandEvent event, String input) async {
       }
     }
 
-    for (var e in update.updates) {
-      var row = e is Map ? e.values.toList() : e;
-      if (row is! List) {
-        row = [row];
+    if (update.updates != null) {
+      for (var e in update.updates) {
+        var row = e is Map ? e.values.toList() : e;
+        if (row is! List) {
+          row = [row];
+        }
+        event.reply(row.join(", "));
+        didSendAny = true;
       }
-      event.reply(row.join(", "));
-      didSendAny = true;
     }
   }, onDone: () {
     _invokes.remove(sub);
